@@ -77,7 +77,7 @@ end
 
 function valudation_section(model, dpp)
 	@unpack σs, two_λs = dpp
-	amplitudes = amplitude.(model.chains, Ref(dpp))
+	amplitudes = amplitude.(model.chains, Ref(σs), Ref(two_λs))
 	# 
 	_validation = Dict{Symbol, Any}(
 		:kinematic_point => Dict(
