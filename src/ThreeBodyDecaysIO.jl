@@ -9,7 +9,7 @@ using Parameters
 
 
 export wrap2dict
-export valudation_section
+export validation_section
 include("dictwriters.jl")
 
 end # module ThreeBodyDecaysIO
