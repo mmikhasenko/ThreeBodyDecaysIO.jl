@@ -75,7 +75,7 @@ function wrap2dict(model::ThreeBodyDecay)
 		:chains => _chains)
 end
 
-function valudation_section(model, dpp)
+function validation_section(model, dpp)
 	@unpack σs, two_λs = dpp
 	amplitudes = amplitude.(model.chains, Ref(σs), Ref(two_λs))
 	# 
