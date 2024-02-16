@@ -77,7 +77,10 @@ end
 
 function validation_section(model, dpp)
 	@unpack σs, two_λs = dpp
-	amplitudes = amplitude.(model.chains, Ref(σs), Ref(two_λs))
+	amplitudes = map(model.chains) do chain
+		value = amplitude(chain, σs, two_λs)
+		replace(string(value), "im" => "i")
+	end
 	# 
 	_validation = Dict{Symbol, Any}(
 		:kinematic_point => Dict(
