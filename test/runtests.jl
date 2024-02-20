@@ -33,8 +33,8 @@ model = let
 end
 
 dict = wrap2dict(model)
-dict[:validation] = valudation_section(model, randomPoint(model.chains[1].tbs))
-
+dict[:validation] = validation_section(
+	model, randomPoint(model.chains[1].tbs), dict[:reference_topology])
 
 json_content = let
 	buffer = IOBuffer()
