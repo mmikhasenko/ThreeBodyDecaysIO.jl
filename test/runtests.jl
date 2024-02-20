@@ -66,3 +66,18 @@ end
 		@test length(chain["propagators"]) == 1
 	end
 end
+
+
+
+@testset "Parse kinematics" begin
+	test_kinematics_dict = Dict{String, Any}(
+		"names"   => Any["p", "K", "g", "Lb"],
+		"spins"   => Any["1/2", "0", "1", "1/2"],
+		"indices" => Any[1, 2, 3, 0],
+		"masses"  => Any[0.141, 0.49, 0.0, 5.2])
+	# 
+	test_tbs = parse_kinematics(test_kinematics_dict)
+	# 
+	test_tbs.ms == ThreeBodyMasses(0.141, 0.49, 0.0; m0 = 5.2)
+	test_tbs.ms == ThreeBodySpins(1, 0, 2; two_h0 = 1)
+end
