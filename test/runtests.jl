@@ -93,24 +93,3 @@ end
 	@test dict2model(input) isa ThreeBodyDecay
 end
 
-
-# Dict(
-# 	"kinematic_point" => [
-# 		Dict(
-# 			"node" => [[[3, 1], 2], 4],
-# 			"phi" => 0.0,
-# 			"theta" => 0.0,
-# 			"mass" => 5.6),
-# 		Dict(
-# 			"node" => [[3, 1], 2],
-# 			"phi" => 0.0,
-# 			"theta" => 0.3,
-# 			"mass" => 4.4),
-# 		Dict(
-# 			"node" => [3, 1],
-# 			"phi" => 0.0,
-# 			"theta" => 0.3,
-# 			"mass" => 1.2),
-# 	])
-
-
