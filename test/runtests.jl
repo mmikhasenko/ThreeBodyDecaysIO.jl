@@ -79,9 +79,9 @@ end
 end
 
 input = copy(json_content)
-updated_input = update2values(input, json_content["lineshapes"])
 
 @testset "Parse chain" begin
+	updated_input = update2values(input, json_content["lineshapes"])
 	tbs = dict2kinematics(updated_input["kinematics"])
 	cdn = dict2chain(updated_input["chains"][1], tbs)
 	@test cdn.chain isa DecayChain
@@ -90,7 +90,7 @@ updated_input = update2values(input, json_content["lineshapes"])
 end
 
 @testset "Parse model" begin
-	@test dict2model(updated_input) isa ThreeBodyDecay
+	@test dict2model(input) isa ThreeBodyDecay
 end
 
 

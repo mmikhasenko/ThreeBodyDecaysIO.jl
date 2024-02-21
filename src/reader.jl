@@ -52,7 +52,8 @@ function dict2chain(dict, tbs)
 	(; coupling, chain, name)
 end
 
-function dict2model(dict)
+function dict2model(input)
+	dict = update2values(input, input["lineshapes"])
 	tbs = dict2kinematics(dict["kinematics"])
 	df = dict2chain.(dict["chains"], Ref(tbs)) |> DataFrame
 	return ThreeBodyDecay(df.name .=> zip(df.coupling, df.chain))
