@@ -20,9 +20,9 @@ end
 
 function lineshape2dict(chain, name)
 	lineshape_type = typeof(chain.Xlineshape)
-	type = "$(name)_$(lineshape_type)"
+	lineshape = "$(name)_$(lineshape_type)"
 	spin = chain.two_j |> d2
-	LittleDict{Symbol, Any}(pairs((; type, spin)))
+	LittleDict{Symbol, Any}(pairs((; lineshape, spin)))
 end
 
 function wrap2dict(chain::AbstractDecayChain, name::AbstractString)
@@ -37,7 +37,7 @@ function wrap2dict(chain::AbstractDecayChain, name::AbstractString)
 		push!(lineshape2dict(chain, name), :node => [i, j])]
 	# 
 	topology = [[i, j], k]
-	Dict{Symbol, Any}(pairs((; vertices, propagators, topology)))
+	Dict{Symbol, Any}(pairs((; vertices, propagators, topology, name)))
 end
 
 function wrap2dict(tbs::ThreeBodySystem)
@@ -62,9 +62,7 @@ function wrap2dict(model::ThreeBodyDecay)
 	_lineshapes = Dict(map(zip(chains, names)) do (chain, name)
 		lineshape = chain.Xlineshape
 		type = typeof(lineshape)
-		fields = fieldnames(type)
-		dict = Dict(fields .=> getfield.(Ref(lineshape), fields))
-		haskey(dict, :L) && pop!(dict, :L)
+		dict = wrap2dict(lineshape)
 		"$(name)_$(type)" => dict
 	end)
 	#
@@ -74,7 +72,6 @@ function wrap2dict(model::ThreeBodyDecay)
 		:reference_topology => [[1, 2], 3],
 		:chains => _chains)
 end
-
 
 function cascade_nodes(σs, ms; k)
 	i, j = ij_from_k(k)
@@ -138,26 +135,3 @@ function validation_section(model, dpp, topology)
 	)
 	return _validation
 end
-
-# 
-1.1;
-# Dict(
-# 	"kinematic_point" => [
-# 		Dict(
-# 			"node" => [[[3, 1], 2], 4],
-# 			"phi" => 0.0,
-# 			"theta" => 0.0,
-# 			"mass" => 5.6),
-# 		Dict(
-# 			"node" => [[3, 1], 2],
-# 			"phi" => 0.0,
-# 			"theta" => 0.3,
-# 			"mass" => 4.4),
-# 		Dict(
-# 			"node" => [3, 1],
-# 			"phi" => 0.0,
-# 			"theta" => 0.3,
-# 			"mass" => 1.2),
-# 	])
-
-

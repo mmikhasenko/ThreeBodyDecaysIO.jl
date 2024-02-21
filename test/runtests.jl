@@ -5,11 +5,6 @@ using ThreeBodyDecaysIO.ThreeBodyDecays
 using ThreeBodyDecaysIO.Parameters
 using ThreeBodyDecaysIO.JSON
 
-struct BW
-	Γ0::Float64
-	m0::Float64
-end
-(bw::BW)(σ) = 1 / (bw.m0^2 - σ - 1im * bw.m0 * bw.Γ0)
 
 model = let
 	tbs = ThreeBodySystem(
@@ -35,12 +30,13 @@ end
 dict = wrap2dict(model)
 dict[:validation] = validation_section(
 	model, randomPoint(model.chains[1].tbs), dict[:reference_topology])
+# 
+open("test.json", "w") do io
+	JSON.print(io, dict, 4)
+end
 
-json_content = let
-	buffer = IOBuffer()
-	JSON.print(buffer, dict, 4)
-	s = String(take!(buffer))
-	JSON.parse(s)
+json_content = open("test.json") do io
+	JSON.parse(io)
 end
 
 @testset "JSON has all key sections" begin
@@ -81,3 +77,44 @@ end
 	test_tbs.ms == ThreeBodyMasses(0.141, 0.49, 0.0; m0 = 5.2)
 	test_tbs.ms == ThreeBodySpins(1, 0, 2; two_h0 = 1)
 end
+
+
+input = copy(json_content)
+updated_input = update2values(input, json_content["lineshapes"])
+# updated_input["chains"][1]["propagators"][1]
+
+# function parse_chain(dict)
+
+@testset "Parse chain" begin
+	tbs = parse_kinematics(updated_input["kinematics"])
+	cdn = dict2chain(updated_input["chains"][1], tbs)
+	@test cdn.chain isa DecayChain
+	@test cdn.name isa AbstractString
+	@test cdn.coupling isa Number
+end
+
+@testset "Parse model" begin
+	@test dict2model(updated_input) isa ThreeBodyDecay
+end
+
+
+# Dict(
+# 	"kinematic_point" => [
+# 		Dict(
+# 			"node" => [[[3, 1], 2], 4],
+# 			"phi" => 0.0,
+# 			"theta" => 0.0,
+# 			"mass" => 5.6),
+# 		Dict(
+# 			"node" => [[3, 1], 2],
+# 			"phi" => 0.0,
+# 			"theta" => 0.3,
+# 			"mass" => 4.4),
+# 		Dict(
+# 			"node" => [3, 1],
+# 			"phi" => 0.0,
+# 			"theta" => 0.3,
+# 			"mass" => 1.2),
+# 	])
+
+
