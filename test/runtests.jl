@@ -72,21 +72,17 @@ end
 		"indices" => Any[1, 2, 3, 0],
 		"masses"  => Any[0.141, 0.49, 0.0, 5.2])
 	# 
-	test_tbs = parse_kinematics(test_kinematics_dict)
+	test_tbs = dict2kinematics(test_kinematics_dict)
 	# 
 	test_tbs.ms == ThreeBodyMasses(0.141, 0.49, 0.0; m0 = 5.2)
 	test_tbs.ms == ThreeBodySpins(1, 0, 2; two_h0 = 1)
 end
 
-
 input = copy(json_content)
 updated_input = update2values(input, json_content["lineshapes"])
-# updated_input["chains"][1]["propagators"][1]
-
-# function parse_chain(dict)
 
 @testset "Parse chain" begin
-	tbs = parse_kinematics(updated_input["kinematics"])
+	tbs = dict2kinematics(updated_input["kinematics"])
 	cdn = dict2chain(updated_input["chains"][1], tbs)
 	@test cdn.chain isa DecayChain
 	@test cdn.name isa AbstractString

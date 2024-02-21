@@ -1,10 +1,8 @@
 using DataFrames
 
+ThreeBodyDecays.x2(s::String) = Int(eval(Meta.parse(s)) * 2)
 
-import ThreeBodyDecays: x2
-x2(s::String) = Int(eval(Meta.parse(s)) * 2)
-
-function parse_kinematics(dict)
+function dict2kinematics(dict)
 	df = DataFrame(dict)
 	sort!(df, :indices)
 	N = size(df, 1) - 1
@@ -21,33 +19,6 @@ function parse_kinematics(dict)
 	tbs = ThreeBodySystem(ms, two_js)
 	return tbs
 end
-
-
-struct BW
-	Γ0::Float64
-	m0::Float64
-end
-(bw::BW)(σ) = 1 / (bw.m0^2 - σ - 1im * bw.m0 * bw.Γ0)
-
-
-function update2values(x, ref)
-	if x isa String && haskey(ref, x)
-		return ref[x]
-	end
-	if x isa Dict
-		_d = Dict{String, Any}()
-		for (k, v) in x
-			_d[k] = update2values(v, ref)
-		end
-		return _d
-	end
-	if x isa AbstractArray
-		return update2values.(x, Ref(ref))
-	end
-	return x
-end
-
-string2complex(s) = eval(Meta.parse(replace(s, "i" => "im")))
 
 function dict2chain(dict, tbs)
 	coupling = string2complex(dict["weight"])
@@ -68,27 +39,27 @@ function dict2chain(dict, tbs)
 	# build two vertices manualy
 	ind_ij = findfirst(v -> v["node"] == [i, j], vertices)
 	@show vertex_ij = vertices[ind_ij]
-	Hij = dict2H(vertex_ij, (; two_j_fin = [two_js[i], two_js[j]], two_j_ini = two_j))
+	Hij = dict2recoupling(vertex_ij, (; two_j_fin = [two_js[i], two_js[j]], two_j_ini = two_j))
 	# 
 	ind_Rk = findfirst(v -> v["node"] == [[i, j], k], vertices)
 	vertex_Rk = vertices[ind_Rk]
-	HRk = dict2H(vertex_Rk, (; two_j_fin = [two_j, two_js[k]], two_j_ini = two_js[4]))
+	HRk = dict2recoupling(vertex_Rk, (; two_j_fin = [two_j, two_js[k]], two_j_ini = two_js[4]))
 
 	# build lineshape
 	lineshape = resonance["lineshape"]
-	X = dict2X(lineshape, ())
+	X = dict2lineshape(lineshape, ())
 	chain = DecayChain(; k, two_j, Xlineshape = X, Hij, HRk, tbs)
 	(; coupling, chain, name)
 end
 
 function dict2model(dict)
-	tbs = parse_kinematics(dict["kinematics"])
+	tbs = dict2kinematics(dict["kinematics"])
 	df = dict2chain.(dict["chains"], Ref(tbs)) |> DataFrame
 	return ThreeBodyDecay(df.name .=> zip(df.coupling, df.chain))
 end
 
 
-function dict2X(dict, properties)
+function dict2lineshape(dict, properties)
 	if dict["type"] == "BW"
 		return BW(; m0 = dict["mass"], Γ0 = dict["width"])
 	end
@@ -96,7 +67,7 @@ function dict2X(dict, properties)
 end
 
 
-function dict2H(dict, properties)
+function dict2recoupling(dict, properties)
 	if dict["type"] == "ls"
 		@unpack l, s = dict
 		two_ja, two_jb = properties.two_j_fin

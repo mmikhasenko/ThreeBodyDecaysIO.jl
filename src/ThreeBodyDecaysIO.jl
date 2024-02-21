@@ -10,18 +10,23 @@ using DataFrames
 
 export wrap2dict
 export topology2k
-export validation_section
 include("dictwriters.jl")
 
-export parse_kinematics
-export parse_chain
-export dict2chain
-export update2values
+export dict2kinematics
 export dict2model
+export dict2chain
+# export dict2lineshape
+# export dict2recoupling
 include("reader.jl")
 
 export BW
 include("lineshapes.jl")
 
+export string2complex
+export update2values
+include("utils.jl")
+
+export validation_section
+include("validation.jl")
 
 end # module ThreeBodyDecaysIO
