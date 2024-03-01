@@ -10,7 +10,7 @@ using DataFrames
 
 export wrap2dict
 export topology2k
-include("dictwriters.jl")
+include("writer.jl")
 
 export dict2kinematics
 export dict2model
