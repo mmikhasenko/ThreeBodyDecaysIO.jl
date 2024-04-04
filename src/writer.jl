@@ -17,7 +17,7 @@ end
 function serializeToDict(H::NoRecoupling)
     type = "parity"
     helicities = [H.two_λa, H.two_λb] .|> d2
-    H_dict = LittleDict{Symbol,Any}(pairs(; type, helicities))
+    H_dict = LittleDict{Symbol,Any}(pairs((; type, helicities)))
     (H_dict, Dict())
 end
 
