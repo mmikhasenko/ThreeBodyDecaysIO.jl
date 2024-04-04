@@ -40,11 +40,11 @@ function lineshape_parser(Xlineshape)
     a = Dict(
         "BlattWeisskopf(resonance)" => Dict(
             :type => "BlattWeisskopf",
-            :scale => 1.5
+            :radius => 1.5
         ),
         "BlattWeisskopf(b-decay)" => Dict(
             :type => "BlattWeisskopf",
-            :scale => 5.0
+            :radius => 5.0
         )
     )
     merge!(appendix, a)
