@@ -1,12 +1,12 @@
 
-function wrap2dict(H::RecouplingLS)
+function serializeToDict(H::RecouplingLS)
     type = "ls"
     l, s = H.two_ls .|> d2
     H_dict = LittleDict{Symbol,Any}(pairs((; type, l, s)))
     (H_dict, Dict())
 end
 
-function wrap2dict(H::ParityRecoupling)
+function serializeToDict(H::ParityRecoupling)
     type = "parity"
     helicities = [H.two_λa, H.two_λb] .|> d2
     parity_factor = ηηηphaseisplus ? '+' : '-'
@@ -14,7 +14,7 @@ function wrap2dict(H::ParityRecoupling)
     (H_dict, Dict())
 end
 
-function wrap2dict(H::NoRecoupling)
+function serializeToDict(H::NoRecoupling)
     type = "parity"
     helicities = [H.two_λa, H.two_λb] .|> d2
     H_dict = LittleDict{Symbol,Any}(pairs(; type, helicities))
@@ -22,7 +22,7 @@ function wrap2dict(H::NoRecoupling)
 end
 
 
-function wrap2dict(chain::AbstractDecayChain, name::AbstractString, lineshape_parser)
+function serializeToDict(chain::AbstractDecayChain, name::AbstractString, lineshape_parser)
     k = 3
     i, j = ij_from_k(k)
     # 
@@ -37,11 +37,11 @@ function wrap2dict(chain::AbstractDecayChain, name::AbstractString, lineshape_pa
         :node => [i, j])
     propagators = [propagator]
     # 
-    H1, a = wrap2dict(chain.HRk)
+    H1, a = serializeToDict(chain.HRk)
     push!(H1, :node => [[i, j], k], :formfactor => FF_production),
     merge!(appendix, a)
     # 
-    H2, a = wrap2dict(chain.HRk)
+    H2, a = serializeToDict(chain.HRk)
     push!(H2, :node => [i, j], :formfactor => FF_decay)
     merge!(appendix, a)
     # 
@@ -52,7 +52,7 @@ function wrap2dict(chain::AbstractDecayChain, name::AbstractString, lineshape_pa
     (chain_dict, appendix)
 end
 
-function wrap2dict(tbs::ThreeBodySystem)
+function serializeToDict(tbs::ThreeBodySystem)
     system_dict = Dict{Symbol,Any}(
         :indices => (1, 2, 3, 0),
         :names => ("p", "K", "g", "Lb"),
@@ -62,15 +62,15 @@ function wrap2dict(tbs::ThreeBodySystem)
     system_dict, Dict()
 end
 
-function wrap2dict(model::ThreeBodyDecay, lineshape_parser)
+function serializeToDict(model::ThreeBodyDecay, lineshape_parser)
     @unpack chains, names, couplings = model
 
     appendix = Dict()
-    _kinematics, a = wrap2dict(model.chains[1].tbs)
+    _kinematics, a = serializeToDict(model.chains[1].tbs)
     merge!(appendix, a)
     # 
     _chains = map(zip(chains, names, couplings)) do (chain, name, coupling)
-        dict, a = wrap2dict(chain, name, lineshape_parser)
+        dict, a = serializeToDict(chain, name, lineshape_parser)
         merge!(appendix, a)
         push!(dict, :weight => replace(string(coupling), "im" => "i"))
     end

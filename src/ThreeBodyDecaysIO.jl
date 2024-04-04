@@ -8,7 +8,7 @@ using OrderedCollections
 using Parameters
 using DataFrames
 
-export wrap2dict
+export serializeToDict
 export topology2k
 include("writer.jl")
 

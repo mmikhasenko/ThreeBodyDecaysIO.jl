@@ -4,7 +4,7 @@
 end
 (bw::BW)(σ) = 1 / (bw.m0^2 - σ - 1im * bw.m0 * bw.Γ0)
 
-function wrap2dict(x::BW)
+function serializeToDict(x::BW)
     return Dict{String,Any}(
         "type" => "BreitWigner",
         "width" => x.Γ0,

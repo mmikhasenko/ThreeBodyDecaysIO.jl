@@ -51,7 +51,7 @@ function lineshape_parser(Xlineshape)
     (; scattering, FF_production, FF_decay), appendix
 end
 
-dict, appendix = wrap2dict(model, lineshape_parser)
+dict, appendix = serializeToDict(model, lineshape_parser)
 dict[:appendix] = appendix
 dict[:validation] = validation_section(
     model, randomPoint(model.chains[1].tbs), dict[:reference_topology])

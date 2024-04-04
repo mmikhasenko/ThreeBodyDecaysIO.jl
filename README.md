@@ -30,7 +30,7 @@ using ThreeBodyDecaysIO
 model = defineYourModel()
 
 # Serialize to dictionary
-dict = wrap2dict(model)
+dict = serializeToDict(model)
 
 # Write to a JSON file
 open("model.json", "w") do io
