@@ -7,7 +7,6 @@ using JSON
 
 model = published_model("Default amplitude model")
 
-model.chains[6].Xlineshape
 
 function lineshape_parser(Xlineshape::BreitWignerMinL)
     appendix = Dict()
@@ -73,10 +72,29 @@ lineshape_parser(model.chains[1].Xlineshape) isa Tuple
 lineshape_parser(model.chains[end].Xlineshape) isa Tuple
 
 dict, appendix = serializeToDict(model, lineshape_parser)
+dict[:kinematics][:names] = ["p", "pi", "K", "Lc"]
 dict[:appendix] = appendix
 dict[:validation] = validation_section(
     model, randomPoint(model.chains[1].tbs), dict[:reference_topology])
 # 
 open("Lc2ppiK.json", "w") do io
     JSON.print(io, dict, 4)
+end
+
+dict[:kinematics]
+
+## Reading and building the model
+
+json_content = open("Lc2ppiK.json") do io
+    JSON.parse(io)
+end
+
+input = copy(json_content)
+
+updated_input = update2values(input, json_content["appendix"])
+tbs = dict2kinematics(updated_input["kinematics"])
+cdn = dict2chain(updated_input["chains"][1], tbs)
+
+map(updated_input["chains"]) do chain_dict
+    chain_dict["propagators"][1]["parametrization"]["type"]
 end
