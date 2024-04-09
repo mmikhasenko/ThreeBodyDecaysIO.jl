@@ -76,15 +76,15 @@ function dict2recoupling(dict, properties)
         return RecouplingLS(; two_ls=(l, s) .|> x2, two_ja, two_jb, two_j=two_j_ini)
     end
     if dict["type"] == "helicity"
-        @unpack lambda_a, lambda_b = dict
-        two_λa = lambda_a |> x2
-        two_λb = lambda_b |> x2
+        @unpack helicities = dict
+        two_λa = helicities[1] |> x2
+        two_λb = helicities[2] |> x2
         return NoRecoupling(two_λa, two_λb)
     end
     if dict["type"] == "parity"
-        @unpack lambda_a, lambda_b, parity = dict
-        two_λa = lambda_a |> x2
-        two_λb = lambda_b |> x2
+        @unpack helicities, parity = dict
+        two_λa = helicities[1] |> x2
+        two_λb = helicities[2] |> x2
         return ParityRecoupling(two)
     end
     error("Unknown type: $(dict["type"])")

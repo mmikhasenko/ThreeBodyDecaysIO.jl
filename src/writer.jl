@@ -9,13 +9,13 @@ end
 function serializeToDict(H::ParityRecoupling)
     type = "parity"
     helicities = [H.two_λa, H.two_λb] .|> d2
-    parity_factor = ηηηphaseisplus ? '+' : '-'
+    parity_factor = H.ηηηphaseisplus ? '+' : '-'
     H_dict = LittleDict{Symbol,Any}(pairs((; type, helicities, parity_factor)))
     (H_dict, Dict())
 end
 
 function serializeToDict(H::NoRecoupling)
-    type = "parity"
+    type = "helicity"
     helicities = [H.two_λa, H.two_λb] .|> d2
     H_dict = LittleDict{Symbol,Any}(pairs((; type, helicities)))
     (H_dict, Dict())
@@ -41,7 +41,7 @@ function serializeToDict(chain::AbstractDecayChain, name::AbstractString, linesh
     push!(H1, :node => [[i, j], k], :formfactor => FF_production),
     merge!(appendix, a)
     # 
-    H2, a = serializeToDict(chain.HRk)
+    H2, a = serializeToDict(chain.Hij)
     push!(H2, :node => [i, j], :formfactor => FF_decay)
     merge!(appendix, a)
     # 
@@ -55,7 +55,7 @@ end
 function serializeToDict(tbs::ThreeBodySystem)
     system_dict = Dict{Symbol,Any}(
         :indices => (1, 2, 3, 0),
-        :names => ("p", "K", "g", "Lb"),
+        :names => ("A", "B", "C", "X"),
         :masses => values(tbs.ms),
         :spins => values(tbs.two_js) .|> d2,
     )
