@@ -1,9 +1,12 @@
 # Script builds the model from JSON file
 
-using ThreeBodyDecays
+using ThreeBodyDecaysIO
 using JSON
 using Graphs
 using GraphPlot
+using Parameters
+using HadronicLineshapes
+
 
 struct DecayTopology{G}
     topology::G
@@ -116,27 +119,70 @@ json_content = open("Lc2ppiK.json") do io
 end
 
 input = copy(json_content)
+updated_input = update2values(input, decay_description["appendix"])
 
 # pull model description from JSON content
-model_descrition = first(input["distributions"])
+model_descrition = first(updated_input["distributions"])
 
 # make sure that we deal with three body hadronic decay
 @assert model_descrition["type"] == "hadronic_cross_section_unpolarized_dist"
-@unpack reference_topology = model_descrition["decay_description"]
+@unpack decay_description = model_descrition
+@unpack reference_topology = decay_description
 
-model_descrition = model_descrition["decay_description"]
+# recursively vcat(x)... to flatten the topology structure
+# Ex: [[1, 2], 3] -> [1, 2, 3]
+flatten_topology(topology) =
+    topology isa Array ? vcat(flatten_topology.(topology)...) : topology
+
+# [TEST] the particles are labeled 1,2,3
+@assert flatten_topology(reference_topology) |> sort == [1, 2, 3]
 
 
 
-using Graphs
-using GraphPlot
+
+@unpack reference_topology = decay_description
 
 
+@unpack functions = input
 
-updated_input = update2values(input, json_content["appendix"])
-tbs = dict2kinematics(updated_input["kinematics"])
-cdn = dict2chain(updated_input["chains"][1], tbs)
-
-map(updated_input["chains"]) do chain_dict
-    chain_dict["propagators"][1]["parametrization"]["type"]
+# build functions from JSON array,
+# add into dictionary with the name as key
+workspace = Dict{String,Any}()
+for fn in functions
+    workspace[fn["name"]] = dict2lineshape(fn)
 end
+workspace
+
+# 
+@unpack kinematics = decay_description
+tbs = dict2kinematics(kinematics)
+
+collect(workspace)[1][2]
+using ThreeBodyDecays
+using DataFrames
+using Plots
+
+df = dict2chain.(decay_description["chains"]; tbs, workspace) |> DataFrame
+model = ThreeBodyDecay(df.name .=> zip(df.coupling, df.chain))
+
+dp = randomPoint(tbs)
+unpolarized_intensity(model, dp.σs)
+
+
+L_BW = [v for (k, v) in workspace if contains(k, r"L.*BW")]
+map(L_BW) do f
+    f(dp.σs[2])
+end
+
+K_BW = [v for (k, v) in workspace if contains(k, r"K.*BW")]
+map(K_BW) do f
+    f(dp.σs[1])
+end
+
+D_BW = [v for (k, v) in workspace if contains(k, r"D.*BW")]
+map(D_BW) do f
+    f(dp.σs[3])
+end
+
+
+plot(masses(model), Base.Fix1(unpolarized_intensity, model))
