@@ -30,14 +30,17 @@ function HadronicLineshapes.BreitWigner(wrapper::HS3InputWrapper{(:width, :mass,
     BreitWigner(mass, width, ma, mb, l, d)
 end
 
+
+function HadronicLineshapes.BlattWeisskopf(wrapper::HS3InputWrapper{(:radius, :l)})
+    @unpack radius, l = wrapper.nt
+    return BlattWeisskopf{l}(radius)
+end
+
 function dict2lineshape(fn)
     @unpack type = fn
     if type == "BreitWignerWidthExp"
         @unpack mass, width = fn
         return BreitWigner(mass, width)
-    elseif type == "BlattWeisskopf"
-        @unpack radius, l = fn
-        return BlattWeisskopf{l}(radius)
     end
     # 
     try
@@ -51,3 +54,25 @@ function dict2lineshape(fn)
     end
 end
 
+
+@with_kw struct BreitWignerWidthExp <: HadronicLineshapes.AbstractFlexFunc
+    m::Float64
+    Γ::Float64
+    γ::Float64
+end
+
+
+function BreitWignerWidthExp(wrapper::HS3InputWrapper{(:slope, :width, :mass)})
+    @unpack mass, width, slope = wrapper
+    return BreitWignerWidthExp(mass, width, slope)
+end
+
+
+function (BW::BreitWignerWidthExp)(σ)
+    mK = 0.493677
+    mπ = 0.13957018
+    σA = mK^2 - mπ^2 / 2
+    m, Γ, γ = BW.pars
+    Γt = (σ - σA) / (m^2 - σA) * Γ * exp(-γ * σ)
+    1 / (m^2 - σ - 1im * m * Γt)
+end

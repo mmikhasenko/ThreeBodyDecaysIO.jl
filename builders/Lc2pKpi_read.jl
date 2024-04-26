@@ -11,7 +11,7 @@ using Plots
 
 
 # get the JSON content
-json_content = open("Lc2ppiK.json") do io
+json_content = open(joinpath(@__DIR__, "..", "models", "Lc2ppiK.json")) do io
     JSON.parse(io)
 end
 
@@ -34,8 +34,6 @@ flatten_topology(topology) =
 
 # [TEST] the particles are labeled 1,2,3
 @assert flatten_topology(reference_topology) |> sort == [1, 2, 3]
-
-@unpack reference_topology = decay_description
 
 @unpack functions = input
 
