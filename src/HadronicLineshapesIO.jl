@@ -32,16 +32,14 @@ end
 
 function dict2lineshape(fn)
     @unpack type = fn
-    if type == "Flatte1405"
-        @unpack mass, width = fn
-        return BreitWigner(mass, width)
-    elseif type == "BreitWignerWidthExp"
+    if type == "BreitWignerWidthExp"
         @unpack mass, width = fn
         return BreitWigner(mass, width)
     elseif type == "BlattWeisskopf"
-        @unpack radius = fn
-        return (s, m1, m2, L) -> BlattWeisskopf{L}(radius * breakup(sqrt(s), m1, m2))
+        @unpack radius, l = fn
+        return BlattWeisskopf{l}(radius)
     end
+    # 
     try
         constructor = Symbol(type)
         wrapper = HS3InputWrapper(fn)

@@ -51,12 +51,13 @@ workspace
 @unpack kinematics = decay_description
 tbs = dict2kinematics(kinematics)
 
-
 df = dict2chain.(decay_description["chains"]; tbs, workspace) |> DataFrame
-model = ThreeBodyDecay(df.name .=> zip(df.coupling, df.chain))
+model = ThreeBodyDecay(Vector{Pair{String,Tuple{Complex,AbstractDecayChain}}}(df.name .=> zip(df.coupling, df.chain)))
 
 dp = randomPoint(tbs)
 unpolarized_intensity(model, dp.σs)
 
-
 plot(masses(model), Base.Fix1(unpolarized_intensity, model))
+
+
+
