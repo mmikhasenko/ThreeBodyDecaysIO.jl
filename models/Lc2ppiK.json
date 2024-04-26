@@ -856,14 +856,14 @@
     },
     {
       "name": "K700_BuggBW",
-      "gamma": 0.94106,
+      "slope": 0.94106,
       "type": "BreitWignerWidthExp",
       "mass": 0.824,
       "width": 0.478
     },
     {
       "name": "K1430_BuggBW",
-      "gamma": 0.020981,
+      "slope": 0.020981,
       "type": "BreitWignerWidthExp",
       "mass": 1.375,
       "width": 0.19
