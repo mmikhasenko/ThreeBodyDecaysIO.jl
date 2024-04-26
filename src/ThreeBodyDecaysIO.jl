@@ -7,15 +7,19 @@ using JSON
 using OrderedCollections
 using Parameters
 using DataFrames
+using HadronicLineshapes
 
 export serializeToDict
 export topology2k
 include("writer.jl")
 
+export HS3InputWrapper
+include("HadronicLineshapesIO.jl")
+
 export dict2kinematics
 export dict2model
 export dict2chain
-# export dict2lineshape
+export dict2lineshape
 # export dict2recoupling
 include("reader.jl")
 

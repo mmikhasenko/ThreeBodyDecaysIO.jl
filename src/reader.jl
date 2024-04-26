@@ -82,27 +82,6 @@ function dict2model(input)
     return ThreeBodyDecay(df.name .=> zip(df.coupling, df.chain))
 end
 
-
-function dict2lineshape(fn)
-    @unpack name, type = fn
-    if type == "BreitWigner"
-        @unpack mass, width, ma, mb, l = fn
-        dr = 1.5 # 1/GeV
-        return BreitWigner(mass, width, ma, mb, l, dr)
-    elseif type == "Flatte1405"
-        @unpack mass, width = fn
-        return BreitWigner(mass, width)
-    elseif type == "BreitWignerWidthExp"
-        @unpack mass, width = fn
-        return BreitWigner(mass, width)
-    elseif type == "BlattWeisskopf"
-        @unpack radius = fn
-        return (s, m1, m2, L) -> BlattWeisskopf{L}(radius * breakup(sqrt(s), m1, m2))
-    else
-        error("Unknown type: $type")
-    end
-end
-
 function dict2recoupling(dict, properties)
     if dict["type"] == "ls"
         @unpack l, s = dict
