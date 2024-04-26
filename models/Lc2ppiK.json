@@ -525,7 +525,7 @@
               {
                 "spin": "0",
                 "node": [2, 3],
-                "parametrization": "K(700)_BuggBW"
+                "parametrization": "K700_BuggBW"
               }
             ],
             "weight": "0.068908 + 2.521444i",
@@ -552,7 +552,7 @@
               {
                 "spin": "0",
                 "node": [2, 3],
-                "parametrization": "K(700)_BuggBW"
+                "parametrization": "K700_BuggBW"
               }
             ],
             "weight": "-2.68563 + 0.03849i",
@@ -579,7 +579,7 @@
               {
                 "spin": "1",
                 "node": [2, 3],
-                "parametrization": "K(892)_BW"
+                "parametrization": "K892_BW"
               }
             ],
             "weight": "0.6885560139393164 - 0.5922539890384868i",
@@ -606,7 +606,7 @@
               {
                 "spin": "1",
                 "node": [2, 3],
-                "parametrization": "K(892)_BW"
+                "parametrization": "K892_BW"
               }
             ],
             "weight": "-0.4198173614898905 - 2.398905956940163i",
@@ -633,7 +633,7 @@
               {
                 "spin": "1",
                 "node": [2, 3],
-                "parametrization": "K(892)_BW"
+                "parametrization": "K892_BW"
               }
             ],
             "weight": "0.5773502691896258 + 0.0i",
@@ -660,7 +660,7 @@
               {
                 "spin": "1",
                 "node": [2, 3],
-                "parametrization": "K(892)_BW"
+                "parametrization": "K892_BW"
               }
             ],
             "weight": "-1.8137146937446735 - 1.9014511500518056i",
@@ -687,7 +687,7 @@
               {
                 "spin": "0",
                 "node": [2, 3],
-                "parametrization": "K(1430)_BuggBW"
+                "parametrization": "K1430_BuggBW"
               }
             ],
             "weight": "-6.71516 + 10.479411i",
@@ -714,7 +714,7 @@
               {
                 "spin": "0",
                 "node": [2, 3],
-                "parametrization": "K(1430)_BuggBW"
+                "parametrization": "K1430_BuggBW"
               }
             ],
             "weight": "0.219754 + 8.741196i",
@@ -845,7 +845,7 @@
       "width": 0.38
     },
     {
-      "name": "K(892)_BW",
+      "name": "K892_BW",
       "l": 1,
       "mb": 0.493677,
       "type": "BreitWigner",
@@ -855,14 +855,14 @@
       "width": 0.047299999999999995
     },
     {
-      "name": "K(700)_BuggBW",
+      "name": "K700_BuggBW",
       "gamma": 0.94106,
       "type": "BreitWignerWidthExp",
       "mass": 0.824,
       "width": 0.478
     },
     {
-      "name": "K(1430)_BuggBW",
+      "name": "K1430_BuggBW",
       "gamma": 0.020981,
       "type": "BreitWignerWidthExp",
       "mass": 1.375,
