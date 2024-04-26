@@ -58,7 +58,7 @@ end
 
 
 function BreitWignerWidthExp(wrapper::HS3InputWrapper{(:slope, :width, :mass)})
-    @unpack mass, width, slope = wrapper
+    @unpack mass, width, slope = wrapper.nt
     return BreitWignerWidthExp(mass, width, slope)
 end
 
