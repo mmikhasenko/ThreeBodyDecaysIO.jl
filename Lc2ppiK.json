@@ -48,7 +48,7 @@
                 "type": "helicity",
                 "helicities": ["1/2", "0"],
                 "node": [[3, 1], 2],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": ""
               },
               {
                 "type": "parity",
@@ -75,7 +75,7 @@
                 "type": "helicity",
                 "helicities": ["-1/2", "0"],
                 "node": [[3, 1], 2],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": ""
               },
               {
                 "type": "parity",
@@ -102,7 +102,7 @@
                 "type": "helicity",
                 "helicities": ["-1/2", "0"],
                 "node": [[3, 1], 2],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": "BlattWeisskopf_b_decay_l1"
               },
               {
                 "type": "parity",
@@ -129,7 +129,7 @@
                 "type": "helicity",
                 "helicities": ["1/2", "0"],
                 "node": [[3, 1], 2],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": "BlattWeisskopf_b_decay_l1"
               },
               {
                 "type": "parity",
@@ -156,7 +156,7 @@
                 "type": "helicity",
                 "helicities": ["1/2", "0"],
                 "node": [[3, 1], 2],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": ""
               },
               {
                 "type": "parity",
@@ -183,7 +183,7 @@
                 "type": "helicity",
                 "helicities": ["-1/2", "0"],
                 "node": [[3, 1], 2],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": ""
               },
               {
                 "type": "parity",
@@ -210,7 +210,7 @@
                 "type": "helicity",
                 "helicities": ["-1/2", "0"],
                 "node": [[3, 1], 2],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": ""
               },
               {
                 "type": "parity",
@@ -237,7 +237,7 @@
                 "type": "helicity",
                 "helicities": ["1/2", "0"],
                 "node": [[3, 1], 2],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": ""
               },
               {
                 "type": "parity",
@@ -264,7 +264,7 @@
                 "type": "helicity",
                 "helicities": ["-1/2", "0"],
                 "node": [[3, 1], 2],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": "BlattWeisskopf_b_decay_l1"
               },
               {
                 "type": "parity",
@@ -291,7 +291,7 @@
                 "type": "helicity",
                 "helicities": ["1/2", "0"],
                 "node": [[3, 1], 2],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": "BlattWeisskopf_b_decay_l1"
               },
               {
                 "type": "parity",
@@ -318,7 +318,7 @@
                 "type": "helicity",
                 "helicities": ["1/2", "0"],
                 "node": [[3, 1], 2],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": ""
               },
               {
                 "type": "parity",
@@ -345,7 +345,7 @@
                 "type": "helicity",
                 "helicities": ["-1/2", "0"],
                 "node": [[3, 1], 2],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": ""
               },
               {
                 "type": "parity",
@@ -372,7 +372,7 @@
                 "type": "helicity",
                 "helicities": ["-1/2", "0"],
                 "node": [[1, 2], 3],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": "BlattWeisskopf_b_decay_l1"
               },
               {
                 "type": "parity",
@@ -399,7 +399,7 @@
                 "type": "helicity",
                 "helicities": ["1/2", "0"],
                 "node": [[1, 2], 3],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": "BlattWeisskopf_b_decay_l1"
               },
               {
                 "type": "parity",
@@ -426,7 +426,7 @@
                 "type": "helicity",
                 "helicities": ["-1/2", "0"],
                 "node": [[1, 2], 3],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": "BlattWeisskopf_b_decay_l1"
               },
               {
                 "type": "parity",
@@ -453,7 +453,7 @@
                 "type": "helicity",
                 "helicities": ["1/2", "0"],
                 "node": [[1, 2], 3],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": "BlattWeisskopf_b_decay_l1"
               },
               {
                 "type": "parity",
@@ -480,7 +480,7 @@
                 "type": "helicity",
                 "helicities": ["-1/2", "0"],
                 "node": [[1, 2], 3],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": "BlattWeisskopf_b_decay_l1"
               },
               {
                 "type": "parity",
@@ -507,7 +507,7 @@
                 "type": "helicity",
                 "helicities": ["1/2", "0"],
                 "node": [[1, 2], 3],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": "BlattWeisskopf_b_decay_l1"
               },
               {
                 "type": "parity",
@@ -534,7 +534,7 @@
                 "type": "helicity",
                 "helicities": ["0", "1/2"],
                 "node": [[2, 3], 1],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": ""
               },
               {
                 "type": "parity",
@@ -561,7 +561,7 @@
                 "type": "helicity",
                 "helicities": ["0", "-1/2"],
                 "node": [[2, 3], 1],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": ""
               },
               {
                 "type": "parity",
@@ -588,7 +588,7 @@
                 "type": "helicity",
                 "helicities": ["-1", "-1/2"],
                 "node": [[2, 3], 1],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": ""
               },
               {
                 "type": "parity",
@@ -615,7 +615,7 @@
                 "type": "helicity",
                 "helicities": ["0", "1/2"],
                 "node": [[2, 3], 1],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": ""
               },
               {
                 "type": "parity",
@@ -642,7 +642,7 @@
                 "type": "helicity",
                 "helicities": ["0", "-1/2"],
                 "node": [[2, 3], 1],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": ""
               },
               {
                 "type": "parity",
@@ -669,7 +669,7 @@
                 "type": "helicity",
                 "helicities": ["1", "1/2"],
                 "node": [[2, 3], 1],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": ""
               },
               {
                 "type": "parity",
@@ -696,7 +696,7 @@
                 "type": "helicity",
                 "helicities": ["0", "1/2"],
                 "node": [[2, 3], 1],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": ""
               },
               {
                 "type": "parity",
@@ -723,7 +723,7 @@
                 "type": "helicity",
                 "helicities": ["0", "-1/2"],
                 "node": [[2, 3], 1],
-                "formfactor": "BlattWeisskopf_b_decay_l2"
+                "formfactor": ""
               },
               {
                 "type": "parity",
@@ -885,22 +885,16 @@
       "l": 1
     },
     {
+      "name": "BlattWeisskopf_resonance_l2",
+      "type": "BlattWeisskopf",
+      "radius": 1.5,
+      "l": 2
+    },
+    {
       "name": "BlattWeisskopf_b_decay_l1",
       "type": "BlattWeisskopf",
       "radius": 5.0,
       "l": 1
-    },
-    {
-      "name": "BlattWeisskopf_b_decay_l2",
-      "type": "BlattWeisskopf",
-      "radius": 5.0,
-      "l": 2
-    },
-    {
-      "name": "BlattWeisskopf_b_decay_l3",
-      "type": "BlattWeisskopf",
-      "radius": 5.0,
-      "l": 3
     }
   ],
   "domains": [
