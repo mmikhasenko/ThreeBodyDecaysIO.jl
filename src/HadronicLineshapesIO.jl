@@ -38,11 +38,6 @@ end
 
 function dict2lineshape(fn)
     @unpack type = fn
-    if type == "BreitWignerWidthExp"
-        @unpack mass, width = fn
-        return BreitWigner(mass, width)
-    end
-    # 
     try
         constructor = Symbol(type)
         wrapper = HS3InputWrapper(fn)
@@ -63,7 +58,7 @@ end
 
 
 function BreitWignerWidthExp(wrapper::HS3InputWrapper{(:slope, :width, :mass)})
-    @unpack mass, width, slope = wrapper
+    @unpack mass, width, slope = wrapper.nt
     return BreitWignerWidthExp(mass, width, slope)
 end
 
@@ -72,7 +67,7 @@ function (BW::BreitWignerWidthExp)(σ)
     mK = 0.493677
     mπ = 0.13957018
     σA = mK^2 - mπ^2 / 2
-    m, Γ, γ = BW.pars
+    @unpack m, Γ, γ = BW
     Γt = (σ - σA) / (m^2 - σA) * Γ * exp(-γ * σ)
     1 / (m^2 - σ - 1im * m * Γt)
 end
