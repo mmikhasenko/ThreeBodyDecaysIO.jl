@@ -48,11 +48,9 @@ function dict2chain(dict; tbs, workspace=Dict())
     @unpack topology = dict
     # 
     k = topology2k(topology)
-    @show topology, k
     i, j = ij_from_k(k)
     # spin of suchannel resonance
     resonance = first(propagators)
-    @show resonance["node"], [i, j]
     @assert resonance["node"] == [i, j]
     # 
     spin = resonance["spin"]
@@ -69,7 +67,6 @@ function dict2chain(dict; tbs, workspace=Dict())
 
     # build lineshape
     scattering = resonance["parametrization"]
-    @show name, scattering, k
     bw = scattering isa Dict ? dict2lineshape(scattering) : workspace[scattering]
     X = bw
     if vertex_Rk["formfactor"] != ""
