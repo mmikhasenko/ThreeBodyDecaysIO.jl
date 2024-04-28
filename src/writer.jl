@@ -53,11 +53,14 @@ function serializeToDict(chain::AbstractDecayChain, name::AbstractString, linesh
 end
 
 function serializeToDict(tbs::ThreeBodySystem)
-    system_dict = Dict{Symbol,Any}(
-        :indices => (1, 2, 3, 0),
-        :names => ("A", "B", "C", "X"),
-        :masses => values(tbs.ms),
-        :spins => values(tbs.two_js) .|> d2,
+    @unpack ms, two_js = tbs
+    system_dict = Dict(
+        :initial_state => Dict(
+            :name => "X", :mass => ms[4], :index => 0, :spin => d2(two_js[4])),
+        :final_state => [
+            Dict(:name => "A", :mass => ms[1], :index => 1, :spin => d2(two_js[1])),
+            Dict(:name => "B", :mass => ms[2], :index => 2, :spin => d2(two_js[2])),
+            Dict(:name => "C", :mass => ms[3], :index => 3, :spin => d2(two_js[3]))]
     )
     system_dict, Dict()
 end
@@ -75,13 +78,14 @@ function serializeToDict(model::ThreeBodyDecay, lineshape_parser)
         push!(dict, :weight => replace(string(coupling), "im" => "i"))
     end
     #
+    i, j, k = ijk(first(chains).k)
+    # 
     model_dict = LittleDict{Symbol,Any}(
         :kinematics => _kinematics,
-        :reference_topology => [[1, 2], 3],
+        :reference_topology => [[i, j], k],
         :chains => _chains)
     model_dict, appendix
 end
-
 
 function topology2k(topology::AbstractArray)
     indices = fully_flatten(topology)
@@ -91,3 +95,50 @@ function topology2k(topology::AbstractArray)
     # 
     return topology[2]
 end
+
+
+
+function add_hs3_fields(decay_description, appendix, model_name="my_amplitude_model")
+
+    k = topology2k(decay_description[:reference_topology])
+    variable_groups = variablesToDict(k)
+    variable_names = vcat(map(variable_groups) do v
+        v[:mass_angles]
+    end...)
+
+    dict = OrderedDict(
+        :distributions => [
+            OrderedDict(
+                :type => "hadronic_cross_section_unpolarized_dist",
+                :name => model_name,
+                :decay_description => decay_description,
+                :variables => variable_groups)],
+        :functions => [(v[:name] = k; v) for (k, v) in appendix],
+        :domains => [
+            OrderedDict(
+                :name => "default",
+                :type => "product_domain",
+                :axes => [
+                    OrderedDict(
+                        :name => name,
+                        :min => -1,
+                        :max => 1,
+                    ) for name in variable_names]
+            )],
+        :misc => Dict(),
+        :parameter_points => Dict()
+    )
+    return dict
+end
+
+
+function variablesToDict(k::Int)
+    i, j = ij_from_k(k)
+    ij_str = "$(i)$(j)"
+    ij_k_str = "$(i)$(j)_$(k)"
+    return [
+        Dict(:node => [i, j], :mass_angles => ["m_" * ij_str, "cos_theta_" * ij_str, "phi_" * ij_str]),
+        Dict(:node => [[i, j], k], :mass_angles => ["m_" * ij_k_str, "cos_theta_" * ij_k_str, "phi_" * ij_k_str])
+    ]
+end
+

@@ -11,6 +11,7 @@ using HadronicLineshapes
 
 export serializeToDict
 export topology2k
+export add_hs3_fields
 include("writer.jl")
 
 export HS3InputWrapper
