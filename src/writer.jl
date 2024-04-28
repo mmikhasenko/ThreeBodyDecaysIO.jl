@@ -87,16 +87,6 @@ function serializeToDict(model::ThreeBodyDecay, lineshape_parser)
     model_dict, appendix
 end
 
-function topology2k(topology::AbstractArray)
-    indices = fully_flatten(topology)
-    length(indices) != 3 && error("Topology with more that three particles is not implemented")
-    !(topology ∈ ([[1, 2], 3], [[2, 3], 1], [[3, 1], 2])) &&
-        error("Only regular topologies [[1, 2], 3], [[2, 3], 1], [[3, 1], 2] are implememnted")
-    # 
-    return topology[2]
-end
-
-
 
 function add_hs3_fields(decay_description, appendix, model_name="my_amplitude_model")
 

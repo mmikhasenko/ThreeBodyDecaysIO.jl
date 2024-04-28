@@ -10,7 +10,6 @@ using DataFrames
 using HadronicLineshapes
 
 export serializeToDict
-export topology2k
 export add_hs3_fields
 include("writer.jl")
 
@@ -29,6 +28,7 @@ include("lineshapes.jl")
 
 export string2complex
 export update2values
+export topology2k, flatten_topology
 include("utils.jl")
 
 export validation_section
