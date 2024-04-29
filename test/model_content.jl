@@ -5,7 +5,7 @@ using ThreeBodyDecaysIO.ThreeBodyDecays
 using ThreeBodyDecaysIO.DataFrames
 using Test
 
-list_of_models = readdir("models")
+list_of_models = readdir(joinpath(@__DIR__, "..", "models"))
 
 map(list_of_models) do file_name
     @info "⭐ Reading model from $file_name ⭐"
