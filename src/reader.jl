@@ -48,11 +48,9 @@ function dict2chain(dict; tbs, workspace=Dict())
     @unpack topology = dict
     # 
     k = topology2k(topology)
-    @show topology, k
     i, j = ij_from_k(k)
     # spin of suchannel resonance
     resonance = first(propagators)
-    @show resonance["node"], [i, j]
     @assert resonance["node"] == [i, j]
     # 
     spin = resonance["spin"]
@@ -69,7 +67,6 @@ function dict2chain(dict; tbs, workspace=Dict())
 
     # build lineshape
     scattering = resonance["parametrization"]
-    @show name, scattering, k
     bw = scattering isa Dict ? dict2lineshape(scattering) : workspace[scattering]
     X = bw
     if vertex_Rk["formfactor"] != ""
@@ -102,10 +99,23 @@ function build_or_fetch(key, workspace)
 end
 
 function dict2model(input)
-    dict = update2values(input, input["appendix"])
-    tbs = dict2kinematics(dict)
-    df = dict2chain.(dict["chains"], Ref(tbs)) |> DataFrame
-    return ThreeBodyDecay(df.name .=> zip(df.coupling, df.chain))
+    model_descrition = first(input["distributions"])
+    # 
+    @assert model_descrition["type"] == "hadronic_cross_section_unpolarized_dist"
+    @unpack decay_description = model_descrition
+    # 
+    @unpack functions = input
+    workspace = Dict{String,Any}()
+    for fn in functions
+        workspace[fn["name"]] = dict2lineshape(fn)
+    end
+    # 
+    @unpack kinematics = decay_description
+    tbs = dict2kinematics(kinematics)
+    # 
+    df = dict2chain.(decay_description["chains"]; tbs, workspace) |> DataFrame
+    model = ThreeBodyDecay(Vector{Pair{String,Tuple{Complex,AbstractDecayChain}}}(df.name .=> zip(df.coupling, df.chain)))
+    return model
 end
 
 function dict2recoupling(dict, properties)
