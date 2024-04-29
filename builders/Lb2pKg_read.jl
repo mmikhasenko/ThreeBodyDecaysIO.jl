@@ -45,6 +45,8 @@ for fn in functions
 end
 workspace
 
+
+
 # 
 @unpack kinematics = decay_description
 tbs = dict2kinematics(kinematics)
@@ -55,7 +57,22 @@ model = ThreeBodyDecay(Vector{Pair{String,Tuple{Complex,AbstractDecayChain}}}(df
 dp = randomPoint(tbs)
 unpolarized_intensity(model, dp.σs)
 
-plot(masses(model), Base.Fix1(unpolarized_intensity, model))
+plot(masses(model), Base.Fix1(unpolarized_intensity, model); iσx=3, iσy=2)
+
+# do the same manually
+let
+    ms = masses(model)
+    # 
+    σ3v = range(lims3(ms)[1], 2.5^2, 100)[2:end-1]
+    σ2v = range(lims2(ms)..., 30)[2:end-1]
+    # 
+    _model = model
+    f(σs) = Kibble(σs, ms^2) > 0 ? 0 : unpolarized_intensity(_model, σs)
+
+    calv = [
+        f(Invariants(ms; σ3, σ2)) for σ2 in σ2v, σ3 in σ3v]
+    heatmap(σ3v, σ2v, calv)
+end
 
 
 
