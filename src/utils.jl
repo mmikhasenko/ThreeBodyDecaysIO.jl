@@ -28,3 +28,18 @@ function topology2k(topology::AbstractArray)
     # 
     return topology[2]
 end
+
+function reorder(last_index)
+    k = last_index
+    i, j = ij_from_k(k)
+    t -> invpermute!(collect(t), [i, j, k]) |> Tuple
+end
+
+function array2dict(a::AbstractArray, key_of_key)
+    map(a) do p
+        _p = copy(p)
+        key = p[key_of_key]
+        pop!(_p, key_of_key)
+        key => _p
+    end |> Dict
+end

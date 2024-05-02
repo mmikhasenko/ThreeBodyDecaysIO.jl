@@ -7,6 +7,7 @@ using JSON
 using Parameters
 using DataFrames
 using Plots
+using Test
 
 
 
@@ -68,6 +69,9 @@ _I = unpolarized_intensity(model, σs0)
 # call the amplitude
 _A = amplitude(model, σs0, [1, 0, 0, 1])  # pars: model, mandelstam variables, helicity values
 
+cosθ31(σs0, masses(model)^2)
+sqrt(σs0[2])
+
 let
     # @test 
     @test _I ≈ 9345.853380852352
@@ -85,3 +89,24 @@ let
 
 end
 
+@unpack misc = input
+@unpack amplitude_model_checksums = misc
+
+@unpack parameter_points = input
+
+
+let check_point_info = amplitude_model_checksums[1]
+    @unpack name, value = check_point_info
+    # 
+    # pull correct parameter point
+    parameter_points_dict = array2dict(parameter_points, "name")
+    parameter_point = parameter_points_dict[name]
+    @unpack parameters = parameter_point
+    # 
+    # extra varaibles from the parameter_point
+    k = topology2k(reference_topology)
+    angles, σs = angles_invariants(parameters, masses(model); k)
+    # 
+    # compute compare
+    value, unpolarized_intensity(model, σs)
+end

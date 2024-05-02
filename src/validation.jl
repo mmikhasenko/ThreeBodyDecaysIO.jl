@@ -48,3 +48,29 @@ function validation_section(model, dpp, topology)
     )
     return _validation
 end
+
+
+# reading validation
+
+function angles_invariants(parameter_point, ms; k)
+    i, j = ij_from_k(k)
+    name_value_dict = array2dict(parameter_point, "name")
+    # 
+    _γ, _cosθij, _mk =
+        map(["phi", "cos_theta", "m"] .* "_$i$j") do key
+            name_value_dict[key]["value"]
+        end
+    _σk = _mk^2
+    # 
+    _α, _cosβ, _m0 =
+        map(["phi", "cos_theta", "m"] .* "_$(i)$(j)_$k") do key
+            name_value_dict[key]["value"]
+        end
+    @assert _m0 == ms[4] "Error: The m0 value of `parameter_point` does not match m0 in `kinematics``."
+    # 
+    _σi = σiofk(_cosθij, _σk, ms^2; k)
+    _σj = sum(ms^2) - _σk - _σi
+    σs = (_σi, _σj, _σk) |> reorder(k) |> MandestamTuple{Float64}
+    (α=_α, cosβ=_cosβ, γ=_γ), σs
+end
+

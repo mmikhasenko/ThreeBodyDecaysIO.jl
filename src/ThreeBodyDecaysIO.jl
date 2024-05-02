@@ -26,12 +26,15 @@ include("reader.jl")
 export BW
 include("lineshapes.jl")
 
+export reorder
+export array2dict
 export string2complex
 export update2values
 export topology2k, flatten_topology
 include("utils.jl")
 
 export validation_section
+export angles_invariants
 include("validation.jl")
 
 end # module ThreeBodyDecaysIO
