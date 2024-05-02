@@ -741,12 +741,12 @@
       },
       "variables": [
         {
-          "node": [1, 2],
-          "mass_angles": ["m_12", "cos_theta_12", "phi_12"]
+          "node": [3, 1],
+          "mass_angles": ["m_31", "cos_theta_31", "phi_31"]
         },
         {
-          "node": [[1, 2], 3],
-          "mass_angles": ["m_12_3", "cos_theta_12_3", "phi_12_3"]
+          "node": [[3, 1], 2],
+          "mass_angles": ["m_31_2", "cos_theta_31_2", "phi_31_2"]
         }
       ],
       "parameters": []
@@ -938,9 +938,9 @@
   "misc": {
     "amplitude_model_checksums": [
       {
-        "point": "validation_point",
+        "name": "validation_point",
         "distribution": "my_model_for_reaction_intensity",
-        "value": 1.3
+        "value": 9345.853380852355
       }
     ]
   },
@@ -949,27 +949,27 @@
       "name": "validation_point",
       "parameters": [
         {
-          "name": "cos_theta_12",
-          "value": 0.23678498926410071
+          "name": "cos_theta_31",
+          "value": -0.2309352648098208
         },
         {
-          "name": "phi_12",
+          "name": "phi_31",
           "value": 0.0
         },
         {
-          "name": "m_12",
-          "value": 1.7058127512193626
+          "name": "m_31",
+          "value": 1.9101377207489973
         },
         {
-          "name": "cos_theta_12_3",
+          "name": "cos_theta_31_2",
           "value": 0.0
         },
         {
-          "name": "phi_12_3",
+          "name": "phi_31_2",
           "value": 0.0
         },
         {
-          "name": "m_12_3",
+          "name": "m_31_2",
           "value": 2.28646
         }
       ]
