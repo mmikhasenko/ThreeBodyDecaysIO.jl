@@ -43,3 +43,23 @@ function array2dict(a::AbstractArray, key_of_key)
         key => _p
     end |> Dict
 end
+
+# array2dict(x) = x
+# array2dict(d::Dict) = Dict((@show k; k => array2dict(v)) for (k, v) in d)
+# function array2dict(a::AbstractArray)
+#     _a = [a...]
+#     !(_a isa AbstractArray{<:Dict}) && return a
+#     !all([haskey(ai, "name") for ai in _a]) && return a
+#     map(_a) do ai
+#         !haskey(ai, "name") && error("Dict $ai does not have :name")
+#         name = ai["name"]
+#         _ai = copy(ai)
+#         pop!(_ai, "name")
+#         name => array2dict(_ai)
+#     end |> Dict
+# end
+# cleaner_dict = array2dict(input)
+
+# open("test.json", "w") do io
+#     JSON.print(io, cleaner_dict)
+# end
