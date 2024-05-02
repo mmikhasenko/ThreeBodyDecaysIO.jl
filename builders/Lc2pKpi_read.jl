@@ -11,6 +11,21 @@ using Test
 
 
 
+# functions
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+# recursively vcat(x)... to flatten the topology structure
+# Ex: [[1, 2], 3] -> [1, 2, 3]
+flatten_topology(topology) =
+    topology isa Array ? vcat(flatten_topology.(topology)...) : topology
+
+# code
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
 # get the JSON content
 json_content = open(joinpath(@__DIR__, "..", "models", "Lc2ppiK.json")) do io
     JSON.parse(io)
@@ -18,95 +33,113 @@ end
 
 input = copy(json_content)
 
-# pull model description from JSON content
-model_descrition = first(input["distributions"])
 
-# make sure that we deal with three body hadronic decay
-@assert model_descrition["type"] == "hadronic_cross_section_unpolarized_dist"
-@unpack decay_description = model_descrition
-@unpack reference_topology = decay_description
 
-# updated_input = update2values(input, decay_description["appendix"])
-
-# recursively vcat(x)... to flatten the topology structure
-# Ex: [[1, 2], 3] -> [1, 2, 3]
-flatten_topology(topology) =
-    topology isa Array ? vcat(flatten_topology.(topology)...) : topology
-
-# [TEST] the particles are labeled 1,2,3
-@assert flatten_topology(reference_topology) |> sort == [1, 2, 3]
-
-@unpack functions = input
+# built functions will be stored in workspace
+workspace = Dict{String,Any}()
 
 # build functions from JSON array,
+@unpack functions = input
+
 # add into dictionary with the name as key
-workspace = Dict{String,Any}()
 for fn in functions
     workspace[fn["name"]] = dict2lineshape(fn)
 end
-workspace
 
-# 
-@unpack kinematics = decay_description
-tbs = dict2kinematics(kinematics)
 
-df = dict2chain.(decay_description["chains"]; tbs, workspace) |> DataFrame
-model = ThreeBodyDecay(Vector{Pair{String,Tuple{Complex,AbstractDecayChain}}}(df.name .=> zip(df.coupling, df.chain)))
 
-dp = randomPoint(tbs)
-unpolarized_intensity(model, dp.σs)
+@with_kw struct HadronicUnpolarizedIntensity{M}
+    model::M
+    reference_k::Int
+end
 
-plot(masses(model), Base.Fix1(unpolarized_intensity, model))
+function (dist::HadronicUnpolarizedIntensity)(pars)
+    @unpack model, reference_k = dist
+    angles, σs = angles_invariants(pars, masses(model); k=reference_k)
+    unpolarized_intensity(model, σs)
+end
 
-# get a random point in the phase space
-σs0 = Invariants(masses(model);
-    σ1=0.7980703453578917,
-    σ2=3.6486261122281745)
 
-# call intensity
-_I = unpolarized_intensity(model, σs0)
+@unpack distributions = input
+# map(distributions) do model_descrition
+let
+    model_descrition = first(distributions)
 
-# call the amplitude
-_A = amplitude(model, σs0, [1, 0, 0, 1])  # pars: model, mandelstam variables, helicity values
+    # make sure that we deal with three body hadronic decay
+    @unpack type, name = model_descrition
+    @assert type == "hadronic_cross_section_unpolarized_dist"
+    @unpack decay_description = model_descrition
+    @unpack reference_topology = decay_description
 
-cosθ31(σs0, masses(model)^2)
-sqrt(σs0[2])
+    # updated_input = update2values(input, decay_description["appendix"])
+
+    # [TEST] the particles are labeled 1,2,3
+    @assert flatten_topology(reference_topology) |> sort == [1, 2, 3] "Error: allowed indices are only 1,2,3"
+
+    @unpack kinematics = decay_description
+    tbs = dict2kinematics(kinematics)
+
+    @unpack chains = decay_description
+    df = dict2chain.(chains; tbs, workspace) |> DataFrame
+    model = ThreeBodyDecay(Vector{Pair{String,Tuple{Complex,AbstractDecayChain}}}(df.name .=> zip(df.coupling, df.chain)))
+
+    workspace[name] = HadronicUnpolarizedIntensity(model, topology2k(reference_topology))
+end
+
 
 let
-    # @test 
-    @test _I ≈ 9345.853380852352
-    # # @test 
-    @test _A ≈ -45.1323269502508 + 54.85942516648639im
-    # 
-    @test model.chains[2].Xlineshape(σs0.σ2) ≈
-          model.chains[2].Xlineshape(σs0.σ2) ≈
-          -0.5636481410171861 + 0.13763637759224928im
-    # 
-    @test model.chains[21].Xlineshape(σs0.σ1) ≈
-          model.chains[22].Xlineshape(σs0.σ1) ≈
-          model.chains[23].Xlineshape(σs0.σ1) ≈
-          model.chains[24].Xlineshape(σs0.σ1) ≈ 2.1687201455088894 + 23.58225917009096im
-
+    model = workspace["my_model_for_reaction_intensity"].model
+    plot(masses(model), Base.Fix1(unpolarized_intensity, model))
 end
+
+let
+    model = workspace["my_model_for_reaction_intensity"].model
+
+    # get a random point in the phase space
+    σs0 = Invariants(masses(model);
+        σ1=0.7980703453578917,
+        σ2=3.6486261122281745)
+
+    # call intensity
+    _I = unpolarized_intensity(model, σs0)
+
+    # call the amplitude
+    _A = amplitude(model, σs0, [1, 0, 0, 1])  # pars: model, mandelstam variables, helicity values
+
+    @testset "Tests from the original package" begin
+        # @test 
+        @test _I ≈ 9345.853380852352
+        # # @test 
+        @test _A ≈ -45.1323269502508 + 54.85942516648639im
+        # 
+        @test model.chains[2].Xlineshape(σs0.σ2) ≈
+              model.chains[2].Xlineshape(σs0.σ2) ≈
+              -0.5636481410171861 + 0.13763637759224928im
+        # 
+        @test model.chains[21].Xlineshape(σs0.σ1) ≈
+              model.chains[22].Xlineshape(σs0.σ1) ≈
+              model.chains[23].Xlineshape(σs0.σ1) ≈
+              model.chains[24].Xlineshape(σs0.σ1) ≈ 2.1687201455088894 + 23.58225917009096im
+    end
+end
+
 
 @unpack misc = input
 @unpack amplitude_model_checksums = misc
-
 @unpack parameter_points = input
 
-
-let check_point_info = amplitude_model_checksums[1]
-    @unpack name, value = check_point_info
+map(amplitude_model_checksums) do check_point_info
+    @unpack name, value, distribution = check_point_info
     # 
+    # pull distribution
+    dist = workspace[distribution]
+
     # pull correct parameter point
     parameter_points_dict = array2dict(parameter_points, "name")
     parameter_point = parameter_points_dict[name]
     @unpack parameters = parameter_point
     # 
-    # extra varaibles from the parameter_point
-    k = topology2k(reference_topology)
-    angles, σs = angles_invariants(parameters, masses(model); k)
-    # 
-    # compute compare
-    value, unpolarized_intensity(model, σs)
+    # compute, compare
+    @assert value ≈ dist(parameters) "Check-point validation failed with $distribution 🥕"
+    return "🟢"
 end
