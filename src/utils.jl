@@ -20,9 +20,6 @@ end
 
 string2complex(s) = eval(Meta.parse(replace(s, "i" => "im")))
 
-flatten_topology(topology) =
-    topology isa Array ? vcat(flatten_topology.(topology)...) : topology
-
 function topology2k(topology::AbstractArray)
     indices = fully_flatten(topology)
     length(indices) != 3 && error("Topology with more that three particles is not implemented")
