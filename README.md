@@ -51,7 +51,7 @@ json_content = open("model.json") do io
 end
 
 # Parse the model
-model = dict2model(json_content)
+model = dict2instance(ThreeBodyDecay, json_content)
 ```
 
 ## Running Tests

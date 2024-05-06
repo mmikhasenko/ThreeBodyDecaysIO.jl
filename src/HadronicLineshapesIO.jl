@@ -1,73 +1,19 @@
-
-struct HS3InputWrapper{T}
-    nt::NamedTuple{T}
+function dict2instance(::Type{BreitWigner}, dict)
+    @unpack mass, width, ma, mb, l, d = dict
+    BreitWigner(mass, width, ma, mb, l, d)
 end
 
-# constuctor
-function HS3InputWrapper(d::Dict)
-    _d = copy(d)
-    haskey(d, "type") && pop!(_d, "type")
-    haskey(d, "name") && pop!(_d, "name")
-    pairs = [k => v for (k, v) in _d]
-    sort!(sort!(pairs; by=first); by=x -> length(x[1]), rev=true)
-    names = Tuple(Symbol.(first.(pairs)))
-    nt = NamedTuple{names}(getindex.(pairs, 2))
-    HS3InputWrapper(nt)
+function dict2instance(::Type{BlattWeisskopf}, dict)
+    @unpack radius, l = dict
+    return BlattWeisskopf{l}(radius)
 end
 
-
-function HadronicLineshapes.BreitWigner(wrapper::HS3InputWrapper{(:channels, :mass)})
-    @unpack mass, channels = wrapper.nt
+function dict2instance(::Type{MultichannelBreitWigner}, dict)
+    @unpack mass, channels = dict
+    # convert dict channels into NamedTuple
     _channels = map(channels) do channel
         @unpack gsq, ma, mb, l, d = channel
         (; gsq, ma, mb, l, d)
     end
-    BreitWigner(mass, _channels)
-end
-
-function HadronicLineshapes.BreitWigner(wrapper::HS3InputWrapper{(:width, :mass, :ma, :mb, :d, :l)})
-    @unpack mass, width, ma, mb, l, d = wrapper.nt
-    BreitWigner(mass, width, ma, mb, l, d)
-end
-
-
-function HadronicLineshapes.BlattWeisskopf(wrapper::HS3InputWrapper{(:radius, :l)})
-    @unpack radius, l = wrapper.nt
-    return BlattWeisskopf{l}(radius)
-end
-
-function dict2lineshape(fn)
-    @unpack type = fn
-    try
-        constructor = Symbol(type)
-        wrapper = HS3InputWrapper(fn)
-        eval(quote
-            $constructor($wrapper)
-        end)
-    catch
-        error("Construction or the type, $type failed:\n")
-    end
-end
-
-
-@with_kw struct BreitWignerWidthExp <: HadronicLineshapes.AbstractFlexFunc
-    m::Float64
-    Γ::Float64
-    γ::Float64
-end
-
-
-function BreitWignerWidthExp(wrapper::HS3InputWrapper{(:slope, :width, :mass)})
-    @unpack mass, width, slope = wrapper.nt
-    return BreitWignerWidthExp(mass, width, slope)
-end
-
-
-function (BW::BreitWignerWidthExp)(σ)
-    mK = 0.493677
-    mπ = 0.13957018
-    σA = mK^2 - mπ^2 / 2
-    @unpack m, Γ, γ = BW
-    Γt = (σ - σA) / (m^2 - σA) * Γ * exp(-γ * σ)
-    1 / (m^2 - σ - 1im * m * Γt)
+    return MultichannelBreitWigner(mass, _channels)
 end

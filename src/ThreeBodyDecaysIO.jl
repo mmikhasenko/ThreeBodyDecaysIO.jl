@@ -13,13 +13,9 @@ export serializeToDict
 export add_hs3_fields
 include("writer.jl")
 
-export HS3InputWrapper
 include("HadronicLineshapesIO.jl")
 
-export dict2kinematics
-export dict2model
-export dict2chain
-export dict2lineshape
+export dict2instance
 # export dict2recoupling
 include("reader.jl")
 

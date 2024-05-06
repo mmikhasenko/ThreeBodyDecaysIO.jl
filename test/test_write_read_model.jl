@@ -15,8 +15,8 @@ model = let
         k=1,
         two_j,
         Xlineshape=BW(1.1, 0.1),
-        Hij=RecouplingLS(two_j, (two_j, 0), 0, 0),
-        HRk=RecouplingLS(tbs.two_js[4], (two_j, two_j), two_j, 0),
+        Hij=RecouplingLS((two_j, 0)),
+        HRk=RecouplingLS((two_j, two_j)),
         tbs)
     ch2 = DecayChain(ch1; k=2)
     ch3 = DecayChain(ch1; k=3)
@@ -98,6 +98,15 @@ end
 input = copy(json_content)
 
 @testset "Parse model" begin
-    @test dict2model(input) isa ThreeBodyDecay
+    @unpack decay_description = input["distributions"][1]
+    @unpack functions = input
+    workspace = Dict{String,Any}()
+    for fn in functions
+        @unpack name, type = fn
+        instance_type = eval(Symbol(type))
+        workspace[name] = dict2instance(instance_type, fn)
+    end
+    @test dict2instance(ThreeBodyDecay, decay_description; workspace) isa ThreeBodyDecay
 end
+
 

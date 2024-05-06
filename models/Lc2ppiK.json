@@ -2,7 +2,7 @@
   "distributions": [
     {
       "name": "my_model_for_reaction_intensity",
-      "type": "hadronic_cross_section_unpolarized_dist",
+      "type": "HadronicUnpolarizedIntensity",
       "decay_description": {
         "kinematics": {
           "initial_state": {
@@ -755,7 +755,7 @@
   "functions": [
     {
       "name": "L1405_Flatte",
-      "type": "BreitWigner",
+      "type": "MultichannelBreitWigner",
       "mass": 1.4051,
       "channels": [
         {
@@ -857,14 +857,14 @@
     {
       "name": "K700_BuggBW",
       "slope": 0.94106,
-      "type": "BreitWignerWidthExp",
+      "type": "BreitWignerWidthExpLikeBugg",
       "mass": 0.824,
       "width": 0.478
     },
     {
       "name": "K1430_BuggBW",
       "slope": 0.020981,
-      "type": "BreitWignerWidthExp",
+      "type": "BreitWignerWidthExpLikeBugg",
       "mass": 1.375,
       "width": 0.19
     },
