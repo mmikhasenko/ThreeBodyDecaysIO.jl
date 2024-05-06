@@ -1944,11 +1944,11 @@
       "variables": [
         {
           "node": [1, 2],
-          "mass_angles": ["m_12", "cos_theta_12", "phi_12"]
+          "mass_angles": ["m_12", "phi_12", "cos_theta_12"]
         },
         {
           "node": [[1, 2], 3],
-          "mass_angles": ["m_12_3", "cos_theta_12_3", "phi_12_3"]
+          "mass_angles": ["m_12_3", "phi_12_3", "cos_theta_12_3"]
         }
       ],
       "parameters": []
@@ -2221,7 +2221,7 @@
   "misc": {
     "amplitude_model_checksums": [
       {
-        "point": "validation_point",
+        "name": "validation_point",
         "distribution": "Lb2pKg_model",
         "value": 1.3
       }
@@ -2253,7 +2253,7 @@
         },
         {
           "name": "m_12_3",
-          "value": 2.28646
+          "value": 5.6196
         }
       ]
     }
