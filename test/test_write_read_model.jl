@@ -22,7 +22,7 @@ model = let
     ch3 = DecayChain(ch1; k=3)
     # 
     ThreeBodyDecay(
-        "K(892)" .=> [(4.0, ch1), (2.0, ch2), (3.0, ch3)])
+        "K892" .=> [(4.0, ch1), (2.0, ch2), (3.0, ch3)])
 end
 
 
