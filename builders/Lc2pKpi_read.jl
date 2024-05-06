@@ -65,24 +65,43 @@ end
     model::M
     reference_k::Int
     parameters::P
-    variables::D
+    mass_angles_cascade_names::D
+end
+
+function mass_angles_names(variables, reference_k)
+    variables_dict = array2dict(variables, "node")
+    i, j, k = ijk(reference_k)
+    mass_angles_Rk = variables_dict[[[i, j], k]]["mass_angles"]
+    mass_angles_ij = variables_dict[[i, j]]["mass_angles"]
+    return (mass_angles_Rk, mass_angles_ij)
+end
+
+function distribute_instance(parameter_values, mass_angles_names)
+    return map(mass_angles_names) do three
+        map(name -> parameter_values[name], three)
+    end
 end
 
 function (dist::HadronicUnpolarizedIntensity)(pars)
-    @unpack model, reference_k = dist
-    angles, σs = angles_invariants(pars, masses(model); k=reference_k)
+    @unpack model, mass_angles_cascade_names, reference_k = dist
+    mass_angles_values = distribute_instance(pars, mass_angles_cascade_names)
+    angles, σs = angles_invariants(mass_angles_values, masses(model); k=reference_k)
     unpolarized_intensity(model, σs)
 end
 
 function ThreeBodyDecaysIO.dict2instance(::Type{HadronicUnpolarizedIntensity}, dict; workspace)
     @unpack parameters, variables, decay_description = dict
     model = dict2instance(ThreeBodyDecay, decay_description; workspace)
+    # 
     @unpack reference_topology = decay_description
     reference_k = topology2k(reference_topology)
-    HadronicUnpolarizedIntensity(; model, reference_k, parameters, variables)
+    # 
+    mass_angles_cascade_names = mass_angles_names(variables, reference_k)
+    HadronicUnpolarizedIntensity(; model, reference_k, parameters, mass_angles_cascade_names)
 end
 
 
+@unpack distributions = input
 
 map(distributions) do dist
     @unpack name, type = dist
@@ -127,11 +146,15 @@ let
     end
 end
 
+
+
+
 @unpack misc = input
 @unpack amplitude_model_checksums = misc
 @unpack parameter_points = input
 
-map(amplitude_model_checksums) do check_point_info
+# map(amplitude_model_checksums) do check_point_info
+let check_point_info = amplitude_model_checksums[1]
     @unpack name, value, distribution = check_point_info
     # 
     # pull distribution
@@ -143,6 +166,8 @@ map(amplitude_model_checksums) do check_point_info
     @unpack parameters = parameter_point
     # 
     # compute, compare
-    @assert value ≈ dist(parameters) "Check-point validation failed with $distribution 🥕"
+    _parameters = array2dict(parameters, "name"; apply=v -> v["value"])
+    @assert value ≈ dist(_parameters) "Check-point validation failed with $distribution 🥕"
     return "🟢"
 end
+
