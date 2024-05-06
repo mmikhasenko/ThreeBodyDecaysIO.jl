@@ -35,12 +35,12 @@ function reorder(last_index)
     t -> invpermute!(collect(t), [i, j, k]) |> Tuple
 end
 
-function array2dict(a::AbstractArray, key_of_key; apply=identity)
+function array2dict(a::AbstractArray; key, apply=identity)
     map(a) do p
         _p = copy(p)
-        key = p[key_of_key]
-        pop!(_p, key_of_key)
-        key => apply(_p)
+        _key = p[key]
+        pop!(_p, key)
+        _key => apply(_p)
     end |> Dict
 end
 

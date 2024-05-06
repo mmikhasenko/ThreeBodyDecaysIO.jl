@@ -26,11 +26,10 @@ function dict2instance(::Type{HadronicUnpolarizedIntensity}, dict; workspace)
 end
 
 
-
 # help functions
 
 function extract_mass_angles_names(variables, reference_k)
-    variables_dict = array2dict(variables, "node"; apply=v -> v["mass_angles"])
+    variables_dict = array2dict(variables; key="node", apply=v -> v["mass_angles"])
     i, j, k = ijk(reference_k)
     # 
     mass_angles_Rk = variables_dict[[[i, j], k]]
