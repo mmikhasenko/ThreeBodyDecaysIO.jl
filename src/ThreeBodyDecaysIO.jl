@@ -15,6 +15,9 @@ include("writer.jl")
 
 include("HadronicLineshapesIO.jl")
 
+export HadronicUnpolarizedIntensity
+include("HadronicUnpolarizedIntensity.jl")
+
 export dict2instance
 # export dict2recoupling
 include("reader.jl")

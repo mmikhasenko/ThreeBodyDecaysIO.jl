@@ -59,48 +59,6 @@ for fn in functions
 end
 
 
-
-
-@with_kw struct HadronicUnpolarizedIntensity{M,P,D}
-    model::M
-    reference_k::Int
-    parameters::P
-    mass_angles_cascade_names::D
-end
-
-function mass_angles_names(variables, reference_k)
-    variables_dict = array2dict(variables, "node")
-    i, j, k = ijk(reference_k)
-    mass_angles_Rk = variables_dict[[[i, j], k]]["mass_angles"]
-    mass_angles_ij = variables_dict[[i, j]]["mass_angles"]
-    return (mass_angles_Rk, mass_angles_ij)
-end
-
-function distribute_instance(parameter_values, mass_angles_names)
-    return map(mass_angles_names) do three
-        map(name -> parameter_values[name], three)
-    end
-end
-
-function (dist::HadronicUnpolarizedIntensity)(pars)
-    @unpack model, mass_angles_cascade_names, reference_k = dist
-    mass_angles_values = distribute_instance(pars, mass_angles_cascade_names)
-    angles, σs = angles_invariants(mass_angles_values, masses(model); k=reference_k)
-    unpolarized_intensity(model, σs)
-end
-
-function ThreeBodyDecaysIO.dict2instance(::Type{HadronicUnpolarizedIntensity}, dict; workspace)
-    @unpack parameters, variables, decay_description = dict
-    model = dict2instance(ThreeBodyDecay, decay_description; workspace)
-    # 
-    @unpack reference_topology = decay_description
-    reference_k = topology2k(reference_topology)
-    # 
-    mass_angles_cascade_names = mass_angles_names(variables, reference_k)
-    HadronicUnpolarizedIntensity(; model, reference_k, parameters, mass_angles_cascade_names)
-end
-
-
 @unpack distributions = input
 
 map(distributions) do dist
@@ -145,8 +103,6 @@ let
               model.chains[24].Xlineshape(σs0.σ1) ≈ 2.1687201455088894 + 23.58225917009096im
     end
 end
-
-
 
 
 @unpack misc = input
