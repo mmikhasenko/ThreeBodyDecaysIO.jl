@@ -92,8 +92,8 @@ end
 input = copy(json_content)
 
 updated_input = update2values(input, json_content["appendix"])
-tbs = dict2kinematics(updated_input["kinematics"])
-cdn = dict2chain(updated_input["chains"][1], tbs)
+tbs = dict2instance(ThreeBodySystem, updated_input["kinematics"])
+cdn = dict2instance(DecayChain, updated_input["chains"][1], tbs)
 
 map(updated_input["chains"]) do chain_dict
     chain_dict["propagators"][1]["parametrization"]["type"]

@@ -48,3 +48,19 @@ function validation_section(model, dpp, topology)
     )
     return _validation
 end
+
+
+# reading validation
+
+function angles_invariants(mass_angles_cascade, ms; k)
+    _m0, _α, _cosβ = mass_angles_cascade[1]
+    @assert _m0 == ms[4] "Error: The m0 value of `mass_angles_cascade` does not match m0 in `kinematics``."
+    # 
+    _mk, _γ, _cosθij = mass_angles_cascade[2]
+    _σk = _mk^2
+    # 
+    _σi = σiofk(_cosθij, _σk, ms^2; k)
+    _σj = sum(ms^2) - _σk - _σi
+    σs = (_σi, _σj, _σk) |> reorder(k) |> MandestamTuple{Float64}
+    (α=_α, cosβ=_cosβ, γ=_γ), σs
+end

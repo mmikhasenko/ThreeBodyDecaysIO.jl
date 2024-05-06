@@ -1,7 +1,4 @@
-
-ThreeBodyDecays.x2(s::String) = Int(eval(Meta.parse(s)) * 2)
-
-function dict2kinematics(dict)
+function dict2instance(::Type{ThreeBodySystem}, dict::Dict)
     initial_state = dict["initial_state"]
     final_states = dict["final_state"]
 
@@ -40,7 +37,9 @@ function dict2kinematics(dict)
     return tbs
 end
 
-function dict2chain(dict; tbs, workspace=Dict())
+
+
+function dict2instance(::Type{DecayChain}, dict; tbs, workspace=Dict())
     coupling = string2complex(dict["weight"])
     name = dict["name"]
     # 
@@ -59,15 +58,15 @@ function dict2chain(dict; tbs, workspace=Dict())
     # build two vertices manualy
     ind_ij = findfirst(v -> v["node"] == [i, j], vertices)
     vertex_ij = vertices[ind_ij]
-    Hij = dict2recoupling(vertex_ij, (; two_j_fin=[two_js[i], two_js[j]], two_j_ini=two_j))
+    Hij = dict2instance(ThreeBodyDecays.Recoupling, vertex_ij, (; two_j_fin=[two_js[i], two_js[j]], two_j_ini=two_j))
     # 
     ind_Rk = findfirst(v -> v["node"] == [[i, j], k], vertices)
     vertex_Rk = vertices[ind_Rk]
-    HRk = dict2recoupling(vertex_Rk, (; two_j_fin=[two_j, two_js[k]], two_j_ini=two_js[4]))
+    HRk = dict2instance(ThreeBodyDecays.Recoupling, vertex_Rk, (; two_j_fin=[two_j, two_js[k]], two_j_ini=two_js[4]))
 
     # build lineshape
     scattering = resonance["parametrization"]
-    bw = scattering isa Dict ? dict2lineshape(scattering) : workspace[scattering]
+    bw = scattering isa Dict ? dict2object(scattering) : workspace[scattering]
     X = bw
     if vertex_Rk["formfactor"] != ""
         FF_Rk = build_or_fetch(vertex_Rk["formfactor"], workspace)
@@ -75,7 +74,7 @@ function dict2chain(dict; tbs, workspace=Dict())
         @unpack ms = tbs
         mR = :m ∈ fieldnames(typeof(bw)) ? bw.m : error("Value for the resonance mass (:m) not found in the lineshape type, $(typeof(bw))")
         # for 0->Rk decay
-        p(σ) = breakup(ms[4], sqrt(σ), ms[k])
+        p(σ) = HadronicLineshapes.breakup(ms[4], sqrt(σ), ms[k])
         FF_Rk_svf = FF_Rk(p) * (1 / FF_Rk(p(mR^2)))
         X *= FF_Rk_svf
     end
@@ -85,7 +84,7 @@ function dict2chain(dict; tbs, workspace=Dict())
         @unpack ms = tbs
         mR = :m ∈ fieldnames(typeof(bw)) ? bw.m : error("Value for the resonance mass (:m) not found in the lineshape type, $(typeof(bw))")
         # for R->ij decay
-        q(σ) = breakup(sqrt(σ), ms[i], ms[j])
+        q(σ) = HadronicLineshapes.breakup(sqrt(σ), ms[i], ms[j])
         FF_ij_svf = FF_ij(q) * (1 / FF_ij(q(mR^2)))
         X *= FF_ij_svf
     end
@@ -94,36 +93,25 @@ function dict2chain(dict; tbs, workspace=Dict())
 end
 
 function build_or_fetch(key, workspace)
-    key isa Dict && return dict2lineshape(key)
+    key isa Dict && return dict2object(key)
     return workspace[key]
 end
 
-function dict2model(input)
-    model_descrition = first(input["distributions"])
-    # 
-    @assert model_descrition["type"] == "hadronic_cross_section_unpolarized_dist"
-    @unpack decay_description = model_descrition
-    # 
-    @unpack functions = input
-    workspace = Dict{String,Any}()
-    for fn in functions
-        workspace[fn["name"]] = dict2lineshape(fn)
-    end
-    # 
-    @unpack kinematics = decay_description
-    tbs = dict2kinematics(kinematics)
-    # 
-    df = dict2chain.(decay_description["chains"]; tbs, workspace) |> DataFrame
-    model = ThreeBodyDecay(Vector{Pair{String,Tuple{Complex,AbstractDecayChain}}}(df.name .=> zip(df.coupling, df.chain)))
+function dict2instance(::Type{ThreeBodyDecay}, decay_description; workspace)
+    @unpack kinematics, chains = decay_description
+    tbs = dict2instance(ThreeBodySystem, kinematics)
+    df = dict2instance.(DecayChain, chains; tbs, workspace) |> DataFrame
+    model = ThreeBodyDecay(Vector{Pair{String,Tuple{Complex,AbstractDecayChain}}}(
+        df.name .=> zip(df.coupling, df.chain)))
     return model
 end
 
-function dict2recoupling(dict, properties)
+function dict2instance(::Type{ThreeBodyDecays.Recoupling}, dict, properties)
     if dict["type"] == "ls"
         @unpack l, s = dict
         two_ja, two_jb = properties.two_j_fin
         @unpack two_j_ini = properties
-        return RecouplingLS(; two_ls=(l, s) .|> x2, two_ja, two_jb, two_j=two_j_ini)
+        return RecouplingLS(; two_ls=(l, s) .|> x2)
     end
     if dict["type"] == "helicity"
         @unpack helicities = dict

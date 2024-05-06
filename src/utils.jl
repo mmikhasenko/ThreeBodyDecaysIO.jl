@@ -1,3 +1,6 @@
+
+
+
 function update2values(x, ref)
     if x isa String && haskey(ref, x)
         return ref[x]
@@ -17,9 +20,6 @@ end
 
 string2complex(s) = eval(Meta.parse(replace(s, "i" => "im")))
 
-flatten_topology(topology) =
-    topology isa Array ? vcat(flatten_topology.(topology)...) : topology
-
 function topology2k(topology::AbstractArray)
     indices = fully_flatten(topology)
     length(indices) != 3 && error("Topology with more that three particles is not implemented")
@@ -28,3 +28,37 @@ function topology2k(topology::AbstractArray)
     # 
     return topology[2]
 end
+
+function reorder(last_index)
+    k = last_index
+    i, j = ij_from_k(k)
+    t -> invpermute!(collect(t), [i, j, k]) |> Tuple
+end
+
+function array2dict(a::AbstractArray; key, apply=identity)
+    map(a) do p
+        _p = copy(p)
+        _key = p[key]
+        pop!(_p, key)
+        _key => apply(_p)
+    end |> Dict
+end
+
+"""
+    flatten_topology(topology)
+
+Converts the topology structure into a flat array of indices.
+
+## Examples:
+```juliadoc
+julia> flatten_topology([[1, 2], 3])
+[1, 2, 3]
+```
+
+Can be used for checking the validity of the topology.
+```julia
+    @assert flatten_topology(reference_topology) |> sort == [1, 2, 3] "Error: allowed indices are only 1,2,3"
+```
+"""
+flatten_topology(topology) =
+    topology isa Array ? vcat(flatten_topology.(topology)...) : topology

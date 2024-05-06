@@ -7,81 +7,90 @@ using JSON
 using Parameters
 using DataFrames
 using Plots
+using Test
 
 
+# functions
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+
+# extra likeshapes for testing
+@with_kw struct BreitWignerWidthExpLikeBugg <: HadronicLineshapes.AbstractFlexFunc
+    m::Float64
+    Γ::Float64
+    γ::Float64
+end
+function (BW::BreitWignerWidthExpLikeBugg)(σ)
+    mK = 0.493677
+    mπ = 0.13957018
+    σA = mK^2 - mπ^2 / 2
+    @unpack m, Γ, γ = BW
+    Γt = (σ - σA) / (m^2 - σA) * Γ * exp(-γ * σ)
+    1 / (m^2 - σ - 1im * m * Γt)
+end
+function ThreeBodyDecaysIO.dict2instance(::Type{BreitWignerWidthExpLikeBugg}, dict)
+    @unpack mass, width, slope = dict
+    return BreitWignerWidthExpLikeBugg(mass, width, slope)
+end
+
+
+# code
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # get the JSON content
-json_content = open(joinpath(@__DIR__, "..", "models", "Lc2ppiK.json")) do io
+input = open(joinpath(@__DIR__, "..", "models", "Lc2ppiK.json")) do io
     JSON.parse(io)
 end
 
-input = copy(json_content)
-
-# pull model description from JSON content
-model_descrition = first(input["distributions"])
-
-# make sure that we deal with three body hadronic decay
-@assert model_descrition["type"] == "hadronic_cross_section_unpolarized_dist"
-@unpack decay_description = model_descrition
-@unpack reference_topology = decay_description
-
-# updated_input = update2values(input, decay_description["appendix"])
-
-# recursively vcat(x)... to flatten the topology structure
-# Ex: [[1, 2], 3] -> [1, 2, 3]
-flatten_topology(topology) =
-    topology isa Array ? vcat(flatten_topology.(topology)...) : topology
-
-# [TEST] the particles are labeled 1,2,3
-@assert flatten_topology(reference_topology) |> sort == [1, 2, 3]
-
-@unpack functions = input
+# built functions will be stored in workspace
+workspace = Dict{String,Any}()
 
 # build functions from JSON array,
-# add into dictionary with the name as key
-workspace = Dict{String,Any}()
+@unpack functions = input
 for fn in functions
-    workspace[fn["name"]] = dict2lineshape(fn)
+    @unpack name, type = fn
+    instance_type = eval(Symbol(type))
+    workspace[name] = dict2instance(instance_type, fn)
 end
-workspace
 
-# 
-@unpack kinematics = decay_description
-tbs = dict2kinematics(kinematics)
+# build distributions from JSON array,
+@unpack distributions = input
+for dist in distributions
+    @unpack name, type = dist
+    instance_type = eval(Symbol(type))
+    workspace[name] = dict2instance(instance_type, distributions[1]; workspace)
+end
 
-df = dict2chain.(decay_description["chains"]; tbs, workspace) |> DataFrame
-model = ThreeBodyDecay(Vector{Pair{String,Tuple{Complex,AbstractDecayChain}}}(df.name .=> zip(df.coupling, df.chain)))
+# perform validation
 
-dp = randomPoint(tbs)
-unpolarized_intensity(model, dp.σs)
+@unpack misc, parameter_points = input
+@unpack amplitude_model_checksums = misc
 
-plot(masses(model), Base.Fix1(unpolarized_intensity, model))
+# map(amplitude_model_checksums) do check_point_info
+let check_point_info = amplitude_model_checksums[1]
+    @unpack name, value, distribution = check_point_info
+    # 
+    # pull distribution
+    dist = workspace[distribution]
 
-# get a random point in the phase space
-σs0 = Invariants(masses(model);
-    σ1=0.7980703453578917,
-    σ2=3.6486261122281745)
+    # pull correct parameter point
+    parameter_points_dict = array2dict(parameter_points; key="name")
+    # find the point in the list of points
+    parameter_point = parameter_points_dict[name]
+    # compute, compare
+    _parameters = array2dict(parameter_point["parameters"];
+        key="name", apply=v -> v["value"])
+    @assert value ≈ dist(_parameters) "Check-point validation failed with $distribution 🥕"
+    return "🟢"
+end
 
-# call intensity
-_I = unpolarized_intensity(model, σs0)
 
-# call the amplitude
-_A = amplitude(model, σs0, [1, 0, 0, 1])  # pars: model, mandelstam variables, helicity values
-
+# plot the model
 let
-    # @test 
-    @test _I ≈ 9345.853380852352
-    # # @test 
-    @test _A ≈ -45.1323269502508 + 54.85942516648639im
-    # 
-    @test model.chains[2].Xlineshape(σs0.σ2) ≈
-          model.chains[2].Xlineshape(σs0.σ2) ≈
-          -0.5636481410171861 + 0.13763637759224928im
-    # 
-    @test model.chains[21].Xlineshape(σs0.σ1) ≈
-          model.chains[22].Xlineshape(σs0.σ1) ≈
-          model.chains[23].Xlineshape(σs0.σ1) ≈
-          model.chains[24].Xlineshape(σs0.σ1) ≈ 2.1687201455088894 + 23.58225917009096im
-
+    model = workspace["my_model_for_reaction_intensity"].model
+    plot(masses(model), Base.Fix1(unpolarized_intensity, model))
 end
-
