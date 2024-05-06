@@ -74,6 +74,7 @@ map(list_of_models) do file_name
 
         @info "🔥 Building lineshapes functions 🔥"
         workspace = Dict{String,Any}()
+        @unpack functions = input
         for fn in functions
             @unpack name, type = fn
             @info "   🎈$name"
