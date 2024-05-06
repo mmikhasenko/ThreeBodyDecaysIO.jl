@@ -16,10 +16,26 @@ using Test
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-# recursively vcat(x)... to flatten the topology structure
-# Ex: [[1, 2], 3] -> [1, 2, 3]
-flatten_topology(topology) =
-    topology isa Array ? vcat(flatten_topology.(topology)...) : topology
+
+# extra likeshapes for testing
+@with_kw struct BreitWignerWidthExpLikeBugg <: HadronicLineshapes.AbstractFlexFunc
+    m::Float64
+    Γ::Float64
+    γ::Float64
+end
+function (BW::BreitWignerWidthExpLikeBugg)(σ)
+    mK = 0.493677
+    mπ = 0.13957018
+    σA = mK^2 - mπ^2 / 2
+    @unpack m, Γ, γ = BW
+    Γt = (σ - σA) / (m^2 - σA) * Γ * exp(-γ * σ)
+    1 / (m^2 - σ - 1im * m * Γt)
+end
+function ThreeBodyDecaysIO.dict2instance(::Type{BreitWignerWidthExpLikeBugg}, dict)
+    @unpack mass, width, slope = dict
+    return BreitWignerWidthExpLikeBugg(mass, width, slope)
+end
+
 
 # code
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -27,30 +43,29 @@ flatten_topology(topology) =
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # get the JSON content
-json_content = open(joinpath(@__DIR__, "..", "models", "Lc2ppiK.json")) do io
+input = open(joinpath(@__DIR__, "..", "models", "Lc2ppiK.json")) do io
     JSON.parse(io)
 end
 
-input = copy(json_content)
-
-
-
-# built functions will be stored in workspace
-workspace = Dict{String,Any}()
-
 # build functions from JSON array,
 @unpack functions = input
-
+# built functions will be stored in workspace
+workspace = Dict{String,Any}()
 # add into dictionary with the name as key
 for fn in functions
-    workspace[fn["name"]] = dict2lineshape(fn)
+    @unpack name, type = fn
+    instance_type = eval(Symbol(type))
+    workspace[name] = dict2instance(instance_type, fn)
 end
 
 
 
-@with_kw struct HadronicUnpolarizedIntensity{M}
+
+@with_kw struct HadronicUnpolarizedIntensity{M,P,D}
     model::M
     reference_k::Int
+    parameters::P
+    variables::D
 end
 
 function (dist::HadronicUnpolarizedIntensity)(pars)
@@ -59,31 +74,20 @@ function (dist::HadronicUnpolarizedIntensity)(pars)
     unpolarized_intensity(model, σs)
 end
 
-
-@unpack distributions = input
-# map(distributions) do model_descrition
-let
-    model_descrition = first(distributions)
-
-    # make sure that we deal with three body hadronic decay
-    @unpack type, name = model_descrition
-    @assert type == "hadronic_cross_section_unpolarized_dist"
-    @unpack decay_description = model_descrition
+function ThreeBodyDecaysIO.dict2instance(::Type{HadronicUnpolarizedIntensity}, dict; workspace)
+    @unpack parameters, variables, decay_description = dict
+    model = dict2instance(ThreeBodyDecay, decay_description; workspace)
     @unpack reference_topology = decay_description
+    reference_k = topology2k(reference_topology)
+    HadronicUnpolarizedIntensity(; model, reference_k, parameters, variables)
+end
 
-    # updated_input = update2values(input, decay_description["appendix"])
 
-    # [TEST] the particles are labeled 1,2,3
-    @assert flatten_topology(reference_topology) |> sort == [1, 2, 3] "Error: allowed indices are only 1,2,3"
 
-    @unpack kinematics = decay_description
-    tbs = dict2kinematics(kinematics)
-
-    @unpack chains = decay_description
-    df = dict2chain.(chains; tbs, workspace) |> DataFrame
-    model = ThreeBodyDecay(Vector{Pair{String,Tuple{Complex,AbstractDecayChain}}}(df.name .=> zip(df.coupling, df.chain)))
-
-    workspace[name] = HadronicUnpolarizedIntensity(model, topology2k(reference_topology))
+map(distributions) do dist
+    @unpack name, type = dist
+    instance_type = eval(Symbol(type))
+    workspace[name] = dict2instance(instance_type, distributions[1]; workspace)
 end
 
 
@@ -122,7 +126,6 @@ let
               model.chains[24].Xlineshape(σs0.σ1) ≈ 2.1687201455088894 + 23.58225917009096im
     end
 end
-
 
 @unpack misc = input
 @unpack amplitude_model_checksums = misc

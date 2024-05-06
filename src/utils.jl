@@ -47,22 +47,21 @@ function array2dict(a::AbstractArray, key_of_key)
     end |> Dict
 end
 
-# array2dict(x) = x
-# array2dict(d::Dict) = Dict((@show k; k => array2dict(v)) for (k, v) in d)
-# function array2dict(a::AbstractArray)
-#     _a = [a...]
-#     !(_a isa AbstractArray{<:Dict}) && return a
-#     !all([haskey(ai, "name") for ai in _a]) && return a
-#     map(_a) do ai
-#         !haskey(ai, "name") && error("Dict $ai does not have :name")
-#         name = ai["name"]
-#         _ai = copy(ai)
-#         pop!(_ai, "name")
-#         name => array2dict(_ai)
-#     end |> Dict
-# end
-# cleaner_dict = array2dict(input)
+"""
+    flatten_topology(topology)
 
-# open("test.json", "w") do io
-#     JSON.print(io, cleaner_dict)
-# end
+Converts the topology structure into a flat array of indices.
+
+## Examples:
+```juliadoc
+julia> flatten_topology([[1, 2], 3])
+[1, 2, 3]
+```
+
+Can be used for checking the validity of the topology.
+```julia
+    @assert flatten_topology(reference_topology) |> sort == [1, 2, 3] "Error: allowed indices are only 1,2,3"
+```
+"""
+flatten_topology(topology) =
+    topology isa Array ? vcat(flatten_topology.(topology)...) : topology
