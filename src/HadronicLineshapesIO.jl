@@ -8,6 +8,11 @@ function dict2instance(::Type{BlattWeisskopf}, dict)
     return BlattWeisskopf{l}(radius)
 end
 
+function dict2instance(::Type{MomentumPower}, dict)
+    @unpack l = dict
+    return MomentumPower{l}()
+end
+
 function dict2instance(::Type{MultichannelBreitWigner}, dict)
     @unpack mass, channels = dict
     # convert dict channels into NamedTuple

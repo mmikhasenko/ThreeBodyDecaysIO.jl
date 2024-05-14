@@ -9,6 +9,13 @@ using Test
     @test bw1 isa HadronicLineshapes.AbstractFlexFunc
 end
 
+@testset "MomentumPower from plane Dict" begin
+    d = Dict("type" => "MomentumPower", "l" => 5)
+    ff1 = dict2instance(MomentumPower, d)
+    @test ff1 isa HadronicLineshapes.MomentumPower
+    @test ff1(2.0) == 32
+end
+
 @testset "BlattWeisskopf from plane Dict" begin
     d = Dict("type" => "BlattWeisskopf", "l" => 0, "radius" => 1.5)
     bw1 = dict2instance(BlattWeisskopf, d)
