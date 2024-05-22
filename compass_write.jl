@@ -233,3 +233,27 @@ df_comp = DataFrame(; wavelist_df.name, computed_values, check_points,
     diff=computed_values - check_points, ratio=computed_values ./ check_points)
 
 sort!(transform!(df_comp, :diff => ByRow(abs) => :absdiff), :absdiff)
+
+
+_wave = build_compass_model(wavelist_df[5, :], sqrt(phsp.s))
+
+
+function lineshape_parser(Xlineshape)
+    appendix = Dict()
+    scattering = "omitted"
+    FF_production = ""
+    FF_decay = ""
+    (; scattering, FF_production, FF_decay), appendix
+end
+
+
+
+
+using ThreeBodyDecaysIO
+using JSON
+
+dict, appendix = serializeToDict(_wave, lineshape_parser)
+
+open("X23pi.json", "w") do io
+    JSON.print(io, dict, 4)
+end
