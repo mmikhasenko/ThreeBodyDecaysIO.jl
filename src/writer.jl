@@ -127,8 +127,8 @@ function variablesToDict(k::Int)
     ij_str = "$(i)$(j)"
     ij_k_str = "$(i)$(j)_$(k)"
     return [
-        Dict(:node => [i, j], :mass_angles => ["m_" * ij_str, "cos_theta_" * ij_str, "phi_" * ij_str]),
-        Dict(:node => [[i, j], k], :mass_angles => ["m_" * ij_k_str, "cos_theta_" * ij_k_str, "phi_" * ij_k_str])
+        Dict(:node => [i, j], :mass_angles => ["m_" * ij_str, "phi_" * ij_str, "cos_theta_" * ij_str]),
+        Dict(:node => [[i, j], k], :mass_angles => ["m_" * ij_k_str, "phi_" * ij_k_str, "cos_theta_" * ij_k_str])
     ]
 end
 
