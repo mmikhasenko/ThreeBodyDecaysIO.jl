@@ -15,7 +15,9 @@ function (dist::HadronicUnpolarizedIntensity)(pars)
 end
 
 function dict2instance(::Type{HadronicUnpolarizedIntensity}, dict; workspace)
-    @unpack parameters, variables, decay_description = dict
+    @unpack decay_description = dict
+    parameters = haskey(dict, "parameters") ? dict["parameters"] : []
+    variables = haskey(dict, "variables") ? dict["variables"] : []
     model = dict2instance(ThreeBodyDecay, decay_description; workspace)
     # 
     @unpack reference_topology = decay_description
