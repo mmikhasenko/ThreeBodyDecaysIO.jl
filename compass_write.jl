@@ -180,14 +180,7 @@ end
 
 phsp = (σ1=0.13569322768095665, cosθ1=0.5832472308560757, ϕ1=0.5079864049912346, cosθ23=-0.12538287914286417, ϕ23=-0.39836956124095346, s=2.3201214385414826)
 
-σs_test = let
-    @unpack σ1 = phsp
-    σ2 = σ2of1(phsp.cosθ23, σ1, masses(wave2)^2)
-    Invariants(masses(wave2); σ1, σ2)
-end
-
 angles_test = (ϕ=phsp.ϕ1, cosθ=phsp.cosθ1, χ=phsp.ϕ23)
-
 
 
 
@@ -197,6 +190,15 @@ wave_description = @NamedTuple{wn, name, J, P, M, ϵ, S, L}((2, "1-(1++)0+rhopiS
 value = 3.5036258938478007 - 0.6239732117186556im
 
 wave2 = build_compass_model(wave_description, sqrt(phsp.s))
+
+
+σs_test = let
+    @unpack σ1 = phsp
+    σ2 = σ2of1(phsp.cosθ23, σ1, masses(wave2)^2)
+    Invariants(masses(wave2); σ1, σ2)
+end
+
+
 
 
 wave2.chains[1].Xlineshape(σs_test[1]) ≈ 1.288120896761017 + 0.03786584582224358im
