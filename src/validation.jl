@@ -59,8 +59,9 @@ function angles_invariants(mass_angles_cascade, ms; k)
     _mk, _γ, _cosθij = mass_angles_cascade[2]
     _σk = _mk^2
     # 
-    _σi = σiofk(_cosθij, _σk, ms^2; k)
-    _σj = sum(ms^2) - _σk - _σi
+    @show _cosθij
+    _σj = σjofk(_cosθij, _σk, ms^2; k)
+    _σi = sum(ms^2) - _σk - _σj
     σs = (_σi, _σj, _σk) |> reorder(k) |> MandestamTuple{Float64}
     (α=_α, cosβ=_cosβ, γ=_γ), σs
 end
