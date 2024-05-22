@@ -12,3 +12,5 @@ include("test_write_read_model.jl")
 # test examples
 include("model_content.jl")
 
+# test validation
+include("model_content.jl")
