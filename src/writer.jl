@@ -93,7 +93,7 @@ function add_hs3_fields(decay_description, appendix, model_name="my_amplitude_mo
     k = topology2k(decay_description[:reference_topology])
     variable_groups = variablesToDict(k)
     variable_names = vcat(map(variable_groups) do v
-        v[:mass_angles]
+        v[:mass_phi_costheta]
     end...)
 
     dict = OrderedDict(
