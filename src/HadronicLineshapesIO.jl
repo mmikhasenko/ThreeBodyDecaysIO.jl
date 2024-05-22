@@ -22,3 +22,27 @@ function dict2instance(::Type{MultichannelBreitWigner}, dict)
     end
     return MultichannelBreitWigner(mass, _channels)
 end
+
+
+function serializeToDict(x::BlattWeisskopf)
+    l = orbital_momentum(x)
+    radius = x.d
+    type = "BlattWeisskopf"
+    dict = LittleDict{Symbol,Any}(pairs((; type, l, radius)))
+    appendix = Dict()
+    return (dict, appendix)
+end
+function serializeToDict(x::MomentumPower)
+    l = orbital_momentum(x)
+    type = "MomentumPower"
+    dict = LittleDict{Symbol,Any}(pairs((; type, l)))
+    appendix = Dict()
+    return (dict, appendix)
+end
+function serializeToDict(x::BreitWigner)
+    type = "BreitWigner"
+    @unpack ma, mb, l, d = x
+    dict = LittleDict{Symbol,Any}(pairs((; type, mass=x.m, width=x.Γ, ma, mb, l, d)))
+    appendix = Dict()
+    return (dict, appendix)
+end
