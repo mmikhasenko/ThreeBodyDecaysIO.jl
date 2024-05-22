@@ -99,7 +99,7 @@ function add_hs3_fields(decay_description, appendix, model_name="my_amplitude_mo
     dict = OrderedDict(
         :distributions => [
             OrderedDict(
-                :type => "hadronic_cross_section_unpolarized_dist",
+                :type => "HadronicUnpolarizedIntensity",
                 :name => model_name,
                 :decay_description => decay_description,
                 :variables => variable_groups)],
