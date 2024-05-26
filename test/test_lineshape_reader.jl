@@ -1,5 +1,6 @@
 using ThreeBodyDecaysIO
 using ThreeBodyDecaysIO.HadronicLineshapes
+using ThreeBodyDecaysIO.OrderedCollections
 using Test
 
 
@@ -23,7 +24,20 @@ end
 end
 
 @testset "MultichannelBreitWigner from a nasted Dict" begin
-    d = Dict("type" => "MultichannelBreitWigner", "name" => "L1520_BW", "mass" => 1.0, "channels" => [Dict("gsq" => 0.1, "ma" => 0.0, "mb" => 0.0, "l" => 0, "d" => 1.5)])
+    d = LittleDict("type" => "MultichannelBreitWigner", "name" => "L1520_BW", "mass" => 1.0, "channels" => [LittleDict("gsq" => 0.1, "ma" => 0.0, "mb" => 0.0, "l" => 0, "d" => 1.5)])
     bw1 = dict2instance(MultichannelBreitWigner, d)
     @test bw1 isa HadronicLineshapes.AbstractFlexFunc
 end
+
+@testset "Deserialize MultichannelBreitWigner" begin
+    d = LittleDict("type" => "MultichannelBreitWigner", "name" => "L1520_BW", "mass" => 1.0,
+        "channels" => [
+            LittleDict("gsq" => 1.1, "ma" => 0.1, "mb" => 0.2, "l" => 1, "d" => 1.5),
+            LittleDict("gsq" => 2.1, "ma" => 1.0, "mb" => 2.0, "l" => 3, "d" => 1.5)])
+    bw1 = dict2instance(MultichannelBreitWigner, d)
+    dict, _ = serializeToDict(bw1)
+
+    @test all(values(dict[:channels][1]) .== values(d["channels"][1]))
+    @test all(values(dict[:channels][2]) .== values(d["channels"][2]))
+end
+
