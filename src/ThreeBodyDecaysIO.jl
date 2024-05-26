@@ -11,6 +11,7 @@ using HadronicLineshapes
 
 export serializeToDict
 export add_hs3_fields
+export trivial_lineshape_parser
 include("writer.jl")
 
 include("HadronicLineshapesIO.jl")

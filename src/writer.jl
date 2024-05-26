@@ -22,7 +22,7 @@ function serializeToDict(H::NoRecoupling)
 end
 
 
-function trivial_parser(Xlineshape)
+function trivial_lineshape_parser(Xlineshape)
     scattering = LittleDict()
     FF_production = LittleDict()
     FF_decay = LittleDict()
