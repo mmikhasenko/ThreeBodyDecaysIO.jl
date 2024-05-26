@@ -71,7 +71,7 @@ lineshape_parser(model.chains[6].Xlineshape) isa Tuple
 lineshape_parser(model.chains[1].Xlineshape) isa Tuple
 lineshape_parser(model.chains[end].Xlineshape) isa Tuple
 
-dict, appendix = serializeToDict(model, lineshape_parser)
+dict, appendix = serializeToDict(model; lineshape_parser)
 dict[:kinematics][:names] = ["p", "pi", "K", "Lc"]
 dict[:appendix] = appendix
 dict[:validation] = validation_section(
