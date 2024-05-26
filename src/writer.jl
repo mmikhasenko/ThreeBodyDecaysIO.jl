@@ -22,7 +22,15 @@ function serializeToDict(H::NoRecoupling)
 end
 
 
-function serializeToDict(chain::AbstractDecayChain, name::AbstractString, lineshape_parser)
+function trivial_parser(Xlineshape)
+    scattering = LittleDict()
+    FF_production = LittleDict()
+    FF_decay = LittleDict()
+    appendix = LittleDict()
+    (; scattering, FF_production, FF_decay), appendix
+end
+
+function serializeToDict(chain::AbstractDecayChain; name::AbstractString, lineshape_parser::Function)
     k = 3
     i, j = ij_from_k(k)
     # 
@@ -52,28 +60,33 @@ function serializeToDict(chain::AbstractDecayChain, name::AbstractString, linesh
     (chain_dict, appendix)
 end
 
-function serializeToDict(tbs::ThreeBodySystem)
+function serializeToDict(tbs::ThreeBodySystem;
+    particle_labels::NTuple{4,String}=("A", "B", "C", "X"))
+    # 
     @unpack ms, two_js = tbs
     system_dict = Dict(
         :initial_state => Dict(
-            :name => "X", :mass => ms[4], :index => 0, :spin => d2(two_js[4])),
+            :name => particle_labels[4], :mass => ms[4], :index => 0, :spin => d2(two_js[4])),
         :final_state => [
-            Dict(:name => "A", :mass => ms[1], :index => 1, :spin => d2(two_js[1])),
-            Dict(:name => "B", :mass => ms[2], :index => 2, :spin => d2(two_js[2])),
-            Dict(:name => "C", :mass => ms[3], :index => 3, :spin => d2(two_js[3]))]
+            Dict(:name => particle_labels[1], :mass => ms[1], :index => 1, :spin => d2(two_js[1])),
+            Dict(:name => particle_labels[2], :mass => ms[2], :index => 2, :spin => d2(two_js[2])),
+            Dict(:name => particle_labels[3], :mass => ms[3], :index => 3, :spin => d2(two_js[3]))]
     )
     system_dict, Dict()
 end
 
-function serializeToDict(model::ThreeBodyDecay, lineshape_parser)
+function serializeToDict(model::ThreeBodyDecay;
+    lineshape_parser::Function,
+    particle_labels::NTuple{4,String}=("A", "B", "C", "X"))
+    # 
     @unpack chains, names, couplings = model
 
     appendix = Dict()
-    _kinematics, a = serializeToDict(model.chains[1].tbs)
+    _kinematics, a = serializeToDict(model.chains[1].tbs; particle_labels)
     merge!(appendix, a)
     # 
     _chains = map(zip(chains, names, couplings)) do (chain, name, coupling)
-        dict, a = serializeToDict(chain, name, lineshape_parser)
+        dict, a = serializeToDict(chain; name, lineshape_parser)
         merge!(appendix, a)
         push!(dict, :weight => replace(string(coupling), "im" => "i"))
     end

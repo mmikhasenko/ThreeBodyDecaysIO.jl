@@ -50,7 +50,7 @@ function lineshape_parser(Xlineshape)
     (; scattering, FF_production, FF_decay), appendix
 end
 
-decay_description, appendix = serializeToDict(model, lineshape_parser)
+decay_description, appendix = serializeToDict(model; lineshape_parser)
 #
 dict = add_hs3_fields(decay_description, appendix, "Lc2pKpi-default-model")
 
@@ -68,6 +68,7 @@ end
 json_content = open("test.json") do io
     JSON.parse(io)
 end
+rm("test.json")
 
 @unpack decay_description = json_content["distributions"][1]
 @testset "JSON has all key sections" begin
