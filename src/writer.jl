@@ -93,13 +93,13 @@ function add_hs3_fields(decay_description, appendix, model_name="my_amplitude_mo
     k = topology2k(decay_description[:reference_topology])
     variable_groups = variablesToDict(k)
     variable_names = vcat(map(variable_groups) do v
-        v[:mass_angles]
+        v[:mass_phi_costheta]
     end...)
 
     dict = OrderedDict(
         :distributions => [
             OrderedDict(
-                :type => "hadronic_cross_section_unpolarized_dist",
+                :type => "HadronicUnpolarizedIntensity",
                 :name => model_name,
                 :decay_description => decay_description,
                 :variables => variable_groups)],
@@ -127,8 +127,8 @@ function variablesToDict(k::Int)
     ij_str = "$(i)$(j)"
     ij_k_str = "$(i)$(j)_$(k)"
     return [
-        Dict(:node => [i, j], :mass_angles => ["m_" * ij_str, "cos_theta_" * ij_str, "phi_" * ij_str]),
-        Dict(:node => [[i, j], k], :mass_angles => ["m_" * ij_k_str, "cos_theta_" * ij_k_str, "phi_" * ij_k_str])
+        Dict(:node => [i, j], :mass_phi_costheta => ["m_" * ij_str, "phi_" * ij_str, "cos_theta_" * ij_str]),
+        Dict(:node => [[i, j], k], :mass_phi_costheta => ["m_" * ij_k_str, "phi_" * ij_k_str, "cos_theta_" * ij_k_str])
     ]
 end
 
