@@ -48,15 +48,23 @@ end
 
 @testset "Order and values in validation_fields" begin
     ms = masses(model)
-    σs = x2σs([0.2, 0.3], ms; k=3)
+    σs = x2σs([0.2, 0.3], ms; k=1)
+    # 
     model_name, point_name = "mymodel", "mypoint"
-    _fields1 = validation_fields(model, σs; k=3, point_name, model_name)
-    _fields2 = validation_fields(model, (m=sqrt(σs[3]), cosθ=-0.4); k=3, point_name, model_name)
+    _fields1 = validation_fields(model, σs; k=2, point_name, model_name)
+    _fields2 = validation_fields(model, (m=sqrt(σs[2]), cosθ=cosθ31(σs, ms^2)); k=2, point_name, model_name)
+    # 
     @test _fields1[2]["value"] ≈ _fields2[2]["value"]
     @test _fields1[2]["point"] == _fields2[2]["point"] == point_name
     @test _fields1[2]["distribution"] == _fields2[2]["distribution"] == model_name
     d1 = array2dict(_fields1[1]["parameters"]; key="name", apply=x -> x["value"])
     d2 = array2dict(_fields2[1]["parameters"]; key="name", apply=x -> x["value"])
-    @test collect(keys(d1)) == collect(keys(d2)) == ["m_12_3", "phi_12_3", "cos_theta_12_3", "m_12", "phi_12", "cos_theta_12"]
+    # 
+    @test collect(keys(d1)) == collect(keys(d2)) == ["m_31_2", "phi_31_2", "cos_theta_31_2", "m_31", "phi_31", "cos_theta_31"]
     @test all(values(d1) .≈ values(d2))
+
+    section = validation_section(model, [σs, σs];
+        k=1, point_names=point_name .* string(1:2), model_name)
+    @test array2dict(section[:parameter_points][1]["parameters"]; key="name") |> keys |> collect ==
+          ["m_23_1", "phi_23_1", "cos_theta_23_1", "m_23", "phi_23", "cos_theta_23"]
 end

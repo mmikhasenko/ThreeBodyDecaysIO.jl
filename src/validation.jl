@@ -69,7 +69,7 @@ end
 
 function validation_section(model, validation_points; k, point_names, model_name)
     validation_dict = map(zip(point_names, validation_points)) do (point_name, point)
-        validation_fields(model, point; k=3, point_name, model_name)
+        validation_fields(model, point; k, point_name, model_name)
     end
     # 
     _dict = LittleDict()
