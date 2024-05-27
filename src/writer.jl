@@ -43,7 +43,7 @@ See `trivial_lineshape_parser`.
 function serializeToDict(chain::AbstractDecayChain;
     name::AbstractString="my_decay_chain",
     lineshape_parser::Function=trivial_lineshape_parser)
-    k = 3
+    @unpack k = chain
     i, j = ij_from_k(k)
     # 
     appendix = Dict()
