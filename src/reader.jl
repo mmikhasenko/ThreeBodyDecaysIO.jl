@@ -81,7 +81,6 @@ function dict2instance(::Type{DecayChain}, dict; tbs, workspace=Dict())
         FF_ij = build_or_fetch(vertex_ij["formfactor"], workspace)
         # single variablre function for the form factor
         @unpack ms = tbs
-        mR = :m ∈ fieldnames(typeof(bw)) ? bw.m : error("Value for the resonance mass (:m) not found in the lineshape type, $(typeof(bw))")
         # for R->ij decay
         q(σ) = HadronicLineshapes.breakup(sqrt(σ), ms[i], ms[j])
         FF_ij_svf = FF_ij(q)
