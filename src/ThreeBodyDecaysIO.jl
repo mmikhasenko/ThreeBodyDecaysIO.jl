@@ -34,8 +34,9 @@ export topology2k, flatten_topology
 export label_diff
 include("utils.jl")
 
-export validation_section
 export angles_invariants
+export validation_fields
+export validation_section
 include("validation.jl")
 
 end # module ThreeBodyDecaysIO

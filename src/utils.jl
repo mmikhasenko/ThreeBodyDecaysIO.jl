@@ -41,7 +41,7 @@ function array2dict(a::AbstractArray; key, apply=identity)
         _key = p[key]
         pop!(_p, key)
         _key => apply(_p)
-    end |> Dict
+    end |> LittleDict
 end
 
 """

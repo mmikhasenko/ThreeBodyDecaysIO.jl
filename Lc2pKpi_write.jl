@@ -74,8 +74,6 @@ lineshape_parser(model.chains[end].Xlineshape) isa Tuple
 dict, appendix = serializeToDict(model; lineshape_parser)
 dict[:kinematics][:names] = ["p", "pi", "K", "Lc"]
 dict[:appendix] = appendix
-dict[:validation] = validation_section(
-    model, randomPoint(model.chains[1].tbs), dict[:reference_topology])
 # 
 open("Lc2ppiK.json", "w") do io
     JSON.print(io, dict, 4)
