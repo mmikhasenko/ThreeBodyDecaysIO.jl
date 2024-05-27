@@ -62,3 +62,11 @@ Can be used for checking the validity of the topology.
 """
 flatten_topology(topology) =
     topology isa Array ? vcat(flatten_topology.(topology)...) : topology
+
+
+function label_diff(diff; levels=[1e-2, 1e-12])
+    _diff = abs(diff)
+    _diff < levels[2] && return '🟢'
+    _diff < levels[1] && return '🟡'
+    return '🔴'
+end
