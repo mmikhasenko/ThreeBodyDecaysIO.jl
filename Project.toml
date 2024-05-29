@@ -13,10 +13,13 @@ ThreeBodyDecays = "e6563dab-9ca1-5843-bde3-2ccf38d63843"
 
 [compat]
 ThreeBodyDecays = "0.11.0"
+HadronicLineshapes = "0.3.0"
 julia = "1.0"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+Lc2ppiKSemileptonicModelLHCb = "2be14d12-1226-44dd-959e-4e18ae37578d"
 
 [targets]
 test = ["Test"]
+doc = ["Lc2ppiKSemileptonicModelLHCb"]
