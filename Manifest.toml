@@ -1,6 +1,6 @@
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.10.2"
+julia_version = "1.10.3"
 manifest_format = "2.0"
 project_hash = "e746e69cae13e90b4932e57b0385dfa76d3772ad"
 
@@ -23,7 +23,7 @@ CompatLinearAlgebraExt = "LinearAlgebra"
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.1.0+0"
+version = "1.1.1+0"
 
 [[deps.ConstructionBase]]
 deps = ["LinearAlgebra"]
@@ -377,9 +377,9 @@ deps = [
     "RecipesBase",
     "StaticArrays",
 ]
-git-tree-sha1 = "363723f8aeaa3ae5475b7cbbf91842f7bd5f5057"
+git-tree-sha1 = "dc7b8e498fcc92d03ff05aa3c005c2ab44ff607a"
 uuid = "e6563dab-9ca1-5843-bde3-2ccf38d63843"
-version = "0.11.2"
+version = "0.11.3"
 
 [[deps.UUIDs]]
 deps = ["Random", "SHA"]

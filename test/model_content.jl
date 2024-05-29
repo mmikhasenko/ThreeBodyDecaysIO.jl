@@ -1,9 +1,10 @@
 using ThreeBodyDecaysIO
-using ThreeBodyDecaysIO.JSON
-using ThreeBodyDecaysIO.Parameters
-using ThreeBodyDecaysIO.ThreeBodyDecays
-using ThreeBodyDecaysIO.DataFrames
+using JSON
+using Parameters
+using ThreeBodyDecays
+using DataFrames
 using Test
+using HadronicLineshapes
 
 
 list_of_models = readdir(joinpath(@__DIR__, "..", "models"))
@@ -117,5 +118,3 @@ map(list_of_models) do file_name
         end
     end
 end
-
-

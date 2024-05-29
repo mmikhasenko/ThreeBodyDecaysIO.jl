@@ -50,13 +50,18 @@ function lineshape_parser(Xlineshape)
     (; scattering, FF_production, FF_decay), appendix
 end
 
+
+@testset "Trivial lineshape parser" begin
+    @test trivial_lineshape_parser isa Function
+    decay_description, appendix = serializeToDict(model; lineshape_parser=trivial_lineshape_parser)
+    @test haskey(decay_description, :chains)
+    @test length(decay_description[:chains]) == 3
+end
+
+
 decay_description, appendix = serializeToDict(model; lineshape_parser)
-#
 dict = add_hs3_fields(decay_description, appendix, "Lc2pKpi-default-model")
 
-# dict[:validation] = validation_section(
-#     model, randomPoint(model.chains[1].tbs), dict[:reference_topology])
-#
 open("test.json", "w") do io
     JSON.print(io, dict, 4)
 end

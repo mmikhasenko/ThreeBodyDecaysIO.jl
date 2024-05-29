@@ -46,3 +46,14 @@ function serializeToDict(x::BreitWigner)
     appendix = Dict()
     return (dict, appendix)
 end
+function serializeToDict(dict::MultichannelBreitWigner)
+    type = "MultichannelBreitWigner"
+    @unpack m, channels = dict
+    _channels = map(channels) do channel
+        @unpack gsq, ma, mb, l, d = channel
+        LittleDict{Symbol,Any}(pairs((; gsq, ma, mb, l, d)))
+    end
+    appendix = Dict()
+    dict = LittleDict{Symbol,Any}(pairs((; type, mass=m, channels=_channels)))
+    return (dict, appendix)
+end

@@ -11,6 +11,7 @@ using HadronicLineshapes
 
 export serializeToDict
 export add_hs3_fields
+export trivial_lineshape_parser
 include("writer.jl")
 
 include("HadronicLineshapesIO.jl")
@@ -30,10 +31,12 @@ export array2dict
 export string2complex
 export update2values
 export topology2k, flatten_topology
+export label_diff
 include("utils.jl")
 
-export validation_section
 export angles_invariants
+export validation_fields
+export validation_section
 include("validation.jl")
 
 end # module ThreeBodyDecaysIO
