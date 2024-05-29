@@ -3,6 +3,9 @@
 
 using Lc2ppiKSemileptonicModelLHCb
 using ThreeBodyDecaysIO
+using ThreeBodyDecays
+using HadronicLineshapes
+using Parameters
 using JSON
 
 model = published_model("Default amplitude model")
@@ -26,11 +29,13 @@ function lineshape_parser(Xlineshape::BreitWignerMinL)
     a = Dict(
         "BlattWeisskopf(resonance)" => Dict(
             :type => "BlattWeisskopf",
-            :radius => dR
+            :radius => dR,
+            :l => Xlineshape.l
         ),
         "BlattWeisskopf(b-decay)" => Dict(
             :type => "BlattWeisskopf",
-            :radius => dΛc
+            :radius => dΛc,
+            :l => 0
         )
     )
     merge!(appendix, a)
@@ -72,7 +77,7 @@ lineshape_parser(model.chains[end].Xlineshape) isa Tuple
 
 dict, appendix = serializeToDict(model; lineshape_parser)
 dict[:kinematics][:names] = ["p", "pi", "K", "Lc"]
-dict[:appendix] = appendix
+dict[:functions] = [(v[:name] = k; v) for (k, v) in appendix]
 # 
 test_file_name = "lc2ppi-test.json"
 open(test_file_name, "w") do io
@@ -88,9 +93,22 @@ json_content = open(test_file_name) do io
 end
 input = copy(json_content)
 
-updated_input = update2values(input, json_content["appendix"])
-tbs = dict2instance(ThreeBodySystem, updated_input["kinematics"])
-cdn = dict2instance(DecayChain, updated_input["chains"][1], tbs)
+workspace = let
+    _workspace = Dict{String,Any}()
+    @unpack functions = input
+    for fn in functions
+        @show fn
+        @unpack name, type = fn
+        @info "   🎈$name"
+        instance_type = eval(Symbol(type))
+        _workspace[name] = dict2instance(instance_type, fn)
+    end
+    _workspace
+end
+
+# updated_input = update2values(input, json_content["appendix"])
+tbs = dict2instance(ThreeBodySystem, input["kinematics"])
+cdn = dict2instance(DecayChain, input["chains"][1]; tbs, workspace)
 
 map(updated_input["chains"]) do chain_dict
     chain_dict["propagators"][1]["parametrization"]["type"]
