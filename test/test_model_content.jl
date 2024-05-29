@@ -7,14 +7,15 @@ using Test
 using HadronicLineshapes
 
 
-list_of_models = readdir(joinpath(@__DIR__, "..", "models"))
 
-map(list_of_models) do file_name
-    @info "⭐ Reading model from $file_name ⭐"
-    # @testset "Test of $file_name" begin
-    @testset "Test of $file_name" begin
+test_file_name = joinpath(@__DIR__, "..", "test", "lc2ppi-lhcb-test.json")
+
+let
+    @info "⭐ Reading model from $test_file_name ⭐"
+    # @testset "Test of $test_file_name" begin
+    @testset "Test of $test_file_name" begin
         # get the JSON content
-        input = open(joinpath(@__DIR__, "..", "models", file_name)) do io
+        input = open(test_file_name) do io
             JSON.parse(io)
         end
         model_descrition = first(input["distributions"])
@@ -64,12 +65,12 @@ function ThreeBodyDecaysIO.dict2instance(::Type{BreitWignerWidthExpLikeBugg}, di
 end
 
 
-map(list_of_models) do file_name
-    @info "⭐ Reading model from $file_name ⭐"
-    # @testset "Test of $file_name" begin
-    @testset "Test of $file_name" begin
+let
+    @info "⭐ Reading model from $test_file_name ⭐"
+    # @testset "Test of $test_file_name" begin
+    @testset "Test of $test_file_name" begin
         # get the JSON content
-        input = open(joinpath(@__DIR__, "..", "models", file_name)) do io
+        input = open(joinpath(@__DIR__, "..", "models", test_file_name)) do io
             JSON.parse(io)
         end
 

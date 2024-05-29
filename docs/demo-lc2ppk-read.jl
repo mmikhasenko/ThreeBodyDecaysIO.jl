@@ -42,7 +42,7 @@ end
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # get the JSON content
-input = open(joinpath(@__DIR__, "..", "models", "Lc2ppiK.json")) do io
+input = open(joinpath(@__DIR__, "..", "test", "lc2ppi-lhcb-test.json")) do io
     JSON.parse(io)
 end
 

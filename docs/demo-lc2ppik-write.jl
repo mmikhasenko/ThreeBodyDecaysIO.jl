@@ -7,7 +7,6 @@ using JSON
 
 model = published_model("Default amplitude model")
 
-
 function lineshape_parser(Xlineshape::BreitWignerMinL)
     appendix = Dict()
     Xlineshape_str = Xlineshape.name * "_BW"
@@ -75,7 +74,8 @@ dict, appendix = serializeToDict(model; lineshape_parser)
 dict[:kinematics][:names] = ["p", "pi", "K", "Lc"]
 dict[:appendix] = appendix
 # 
-open("Lc2ppiK.json", "w") do io
+test_file_name = "lc2ppi-test.json"
+open(test_file_name, "w") do io
     JSON.print(io, dict, 4)
 end
 
@@ -83,10 +83,9 @@ dict[:kinematics]
 
 ## Reading and building the model
 
-json_content = open("Lc2ppiK.json") do io
+json_content = open(test_file_name) do io
     JSON.parse(io)
 end
-
 input = copy(json_content)
 
 updated_input = update2values(input, json_content["appendix"])
@@ -96,3 +95,4 @@ cdn = dict2instance(DecayChain, updated_input["chains"][1], tbs)
 map(updated_input["chains"]) do chain_dict
     chain_dict["propagators"][1]["parametrization"]["type"]
 end
+rm(test_file_name)
