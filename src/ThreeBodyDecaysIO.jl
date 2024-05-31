@@ -16,7 +16,7 @@ export trivial_lineshape_parser
 include("writer.jl")
 
 include("HadronicLineshapesIO.jl")
-export GenericFunction
+export generic_function
 include("generic_function.jl")
 
 export HadronicUnpolarizedIntensity

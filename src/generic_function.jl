@@ -35,9 +35,9 @@ function parse_into_function(expression)
 end
 
 
-struct GenericFunction end
+struct generic_function end
 
-function dict2instance(::Type{GenericFunction}, dict)
+function dict2instance(::Type{generic_function}, dict)
     @unpack expression = dict
     f = parse_into_function(expression)
     WrapFlexFunction(f)
