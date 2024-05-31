@@ -8,6 +8,7 @@ using OrderedCollections
 using Parameters
 using DataFrames
 using HadronicLineshapes
+using MacroTools
 
 export serializeToDict
 export add_hs3_fields
@@ -15,6 +16,8 @@ export trivial_lineshape_parser
 include("writer.jl")
 
 include("HadronicLineshapesIO.jl")
+export GenericFunction
+include("generic_function.jl")
 
 export HadronicUnpolarizedIntensity
 include("HadronicUnpolarizedIntensity.jl")
