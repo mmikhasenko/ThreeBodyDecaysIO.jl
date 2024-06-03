@@ -4,11 +4,18 @@ using ThreeBodyDecaysIO.OrderedCollections
 using Test
 
 
-# @testset "BreitWigner from plane Dict" begin
-let
-    d = Dict("type" => "BreitWigner", "name" => "L1520_BW", "mass" => 1.0, "width" => 0.1, "ma" => 0.0, "mb" => 0.0, "l" => 0, "d" => 1.5, "x" => "m23sq")
+@testset "BreitWigner from plane Dict" begin
+    d = Dict("type" => "BreitWigner",
+        "name" => "L1520_BW",
+        "mass" => 1.0, "width" => 0.1,
+        "ma" => 0.0, "mb" => 0.0,
+        "l" => 0, "d" => 1.5, "x" => "m23sq")
     bw1 = dict2instance(BreitWigner, d)
     @test bw1 isa NamedArgFunc{<:HadronicLineshapes.AbstractFlexFunc,Vector{String},Vector{String}}
+    @test bw1(Dict("m23sq" => 1.1)) ≈ -5 + 5im
+    @test bw1(LittleDict("m23sq" => 1.1)) ≈ -5 + 5im
+    @test bw1(OrderedDict("m23sq" => 1.1)) ≈ -5 + 5im
+    @test_throws KeyError bw1(LittleDict("msq" => 1.1))
 end
 
 

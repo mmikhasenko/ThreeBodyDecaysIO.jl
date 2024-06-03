@@ -6,6 +6,15 @@
     parameters::P = String[] # currently empty
 end
 
+
+result = replace(["a", "a"], "a" => 1)
+
+function (obj::NamedArgFunc)(dict::AbstractDict)
+    @unpack variable_names = obj
+    variable_value = dict[first(variable_names)]
+    obj.f(variable_value)
+end
+
 function dict2instance(::Type{BreitWigner}, dict)
     @unpack mass, width, ma, mb, l, d, x = dict
     bw = BreitWigner(mass, width, ma, mb, l, d)
