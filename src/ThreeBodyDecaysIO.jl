@@ -15,6 +15,7 @@ export add_hs3_fields
 export trivial_lineshape_parser
 include("writer.jl")
 
+export NamedArgFunc
 include("HadronicLineshapesIO.jl")
 export generic_function
 include("generic_function.jl")

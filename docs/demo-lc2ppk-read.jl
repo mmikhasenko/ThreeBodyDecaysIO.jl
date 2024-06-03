@@ -31,8 +31,11 @@ function (BW::BreitWignerWidthExpLikeBugg)(σ)
     1 / (m^2 - σ - 1im * m * Γt)
 end
 function ThreeBodyDecaysIO.dict2instance(::Type{BreitWignerWidthExpLikeBugg}, dict)
-    @unpack mass, width, slope = dict
-    return BreitWignerWidthExpLikeBugg(mass, width, slope)
+    @unpack mass, width, slope, x = dict
+    bw = BreitWignerWidthExpLikeBugg(mass, width, slope)
+    parameters = String[]
+    variables = [x]
+    return NamedArgFunc(bw, variables, parameters)
 end
 
 

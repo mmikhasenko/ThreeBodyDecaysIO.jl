@@ -66,22 +66,21 @@ function dict2instance(::Type{DecayChain}, dict; tbs, workspace=Dict())
 
     # build lineshape
     scattering = resonance["parametrization"]
-    bw = scattering isa Dict ? dict2instance(scattering) : workspace[scattering]
-    X = bw
+    scattering isa Dict && error("Deserialization of lineshape directly from the chains is not implemented yet. Use `functions` field instead.")
+    !(scattering isa String) && error("The scattering should be a string. Got: $scattering")
+    X = workspace[scattering].f
     if vertex_Rk["formfactor"] != ""
-        FF_Rk = build_or_fetch(vertex_Rk["formfactor"], workspace)
-        # single variablre function for the form factor
-        @unpack ms = tbs
         # for 0->Rk decay
+        FF_Rk = build_or_fetch(vertex_Rk["formfactor"], workspace)
+        @unpack ms = tbs
         p(σ) = HadronicLineshapes.breakup(ms[4], sqrt(σ), ms[k])
         FF_Rk_svf = FF_Rk(p)
         X *= FF_Rk_svf
     end
     if vertex_ij["formfactor"] != ""
-        FF_ij = build_or_fetch(vertex_ij["formfactor"], workspace)
-        # single variablre function for the form factor
-        @unpack ms = tbs
         # for R->ij decay
+        FF_ij = build_or_fetch(vertex_ij["formfactor"], workspace)
+        @unpack ms = tbs
         q(σ) = HadronicLineshapes.breakup(sqrt(σ), ms[i], ms[j])
         FF_ij_svf = FF_ij(q)
         X *= FF_ij_svf

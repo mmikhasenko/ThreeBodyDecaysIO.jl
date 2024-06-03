@@ -60,7 +60,8 @@ end
 
 
 decay_description, appendix = serializeToDict(model; lineshape_parser)
-dict = add_hs3_fields(decay_description, appendix, "Lc2pKpi-default-model")
+appendix["K892_BW"][:x] = "sigma"
+dict = add_hs3_fields(decay_description, appendix, "default-model")
 
 open("test.json", "w") do io
     JSON.print(io, dict, 4)
