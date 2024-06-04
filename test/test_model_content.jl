@@ -62,9 +62,8 @@ end
 function ThreeBodyDecaysIO.dict2instance(::Type{BreitWignerWidthExpLikeBugg}, dict)
     @unpack mass, width, slope, x = dict
     bw = BreitWignerWidthExpLikeBugg(mass, width, slope)
-    parameters = String[]
     variables = [x]
-    return NamedArgFunc(bw, variables, parameters)
+    return NamedArgFunc(bw, variables)
 end
 
 let

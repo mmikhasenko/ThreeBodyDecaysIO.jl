@@ -1,13 +1,9 @@
 # deserialization
 
-@with_kw struct NamedArgFunc{T,P,D}
-    f::T
+@with_kw struct NamedArgFunc{M,D}
+    f::M
     variable_names::D
-    parameters::P = String[] # currently empty
 end
-
-
-result = replace(["a", "a"], "a" => 1)
 
 function (obj::NamedArgFunc)(dict::AbstractDict)
     @unpack variable_names = obj
@@ -15,15 +11,16 @@ function (obj::NamedArgFunc)(dict::AbstractDict)
     obj.f(variable_value)
 end
 
-function dict2instance(::Type{BreitWigner}, dict)
+# ## Functions of s
+
+function dict2instance(::Type{BreitWigner}, dict::AbstractDict)
     @unpack mass, width, ma, mb, l, d, x = dict
     bw = BreitWigner(mass, width, ma, mb, l, d)
-    parameters = String[]
     variables = [x]
-    NamedArgFunc(bw, variables, parameters)
+    NamedArgFunc(bw, variables)
 end
 
-function dict2instance(::Type{MultichannelBreitWigner}, dict)
+function dict2instance(::Type{MultichannelBreitWigner}, dict::AbstractDict)
     @unpack mass, channels, x = dict
     # convert dict channels into NamedTuple
     _channels = map(channels) do channel
@@ -31,10 +28,12 @@ function dict2instance(::Type{MultichannelBreitWigner}, dict)
         (; gsq, ma, mb, l, d)
     end
     bw = MultichannelBreitWigner(mass, _channels)
-    parameters = String[]
     variables = [x]
-    return NamedArgFunc(bw, variables, parameters)
+    return NamedArgFunc(bw, variables)
 end
+
+
+# ## Functions of p
 
 function dict2instance(::Type{BlattWeisskopf}, dict)
     @unpack radius, l = dict

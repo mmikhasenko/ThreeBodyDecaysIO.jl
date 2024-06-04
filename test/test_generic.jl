@@ -7,6 +7,9 @@ e(x) = 1 / (0.77^2 - x - 1im * 0.77 * 0.15 * sin(x))
 # 
 expression = "1/(0.77^2 - x - i*0.77*0.15*sin(x))"
 
+@test expression_argument(Meta.parse(expression)) == :x
+@test expression_argument(Meta.parse(replace(expression, "x" => "m12sq"))) == :m12sq
+
 @testset "Parse into a function works" begin
     f = parse_into_function(expression)
     @test f(1.1) == e(1.1)
@@ -36,6 +39,7 @@ end
     @test X_K1430_BuggBW(1.1) ≈ 1.2297831004988296 + 0.20758230110948936im
 end
 
+
 let
     dict = Dict(
         "type" => "generic_function",
@@ -45,7 +49,7 @@ let
     instance_type = eval(Symbol(type))
     custom_function = dict2instance(instance_type, dict)
     @testset "generic_function works" begin
-        @test custom_function(1.1) == e(1.1)
+        @test custom_function(Dict("x" => 1.1)) == e(1.1)
     end
 end
 

@@ -1,9 +1,8 @@
 
 
-@with_kw struct HadronicUnpolarizedIntensity{M,P,D}
+@with_kw struct HadronicUnpolarizedIntensity{M,D}
     model::M
     reference_k::Int
-    parameters::P # currently empty
     mass_angles_cascade_names::D
 end
 
@@ -16,7 +15,7 @@ end
 
 function dict2instance(::Type{HadronicUnpolarizedIntensity}, dict; workspace)
     @unpack decay_description = dict
-    parameters = haskey(dict, "parameters") ? dict["parameters"] : String[]
+    haskey(dict, "parameters") && @warn "parameters are not used in HadronicUnpolarizedIntensity"
     variables = haskey(dict, "variables") ? dict["variables"] : String[]
     model = dict2instance(ThreeBodyDecay, decay_description; workspace)
     # 
@@ -24,7 +23,7 @@ function dict2instance(::Type{HadronicUnpolarizedIntensity}, dict; workspace)
     reference_k = topology2k(reference_topology)
     # 
     mass_angles_cascade_names = extract_mass_angles_names(variables, reference_k)
-    HadronicUnpolarizedIntensity(; model, reference_k, parameters, mass_angles_cascade_names)
+    HadronicUnpolarizedIntensity(; model, reference_k, mass_angles_cascade_names)
 end
 
 
