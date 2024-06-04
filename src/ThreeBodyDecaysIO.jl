@@ -18,6 +18,7 @@ include("writer.jl")
 export NamedArgFunc
 include("HadronicLineshapesIO.jl")
 export generic_function
+export expression_argument, expression_arguments
 include("generic_function.jl")
 
 export HadronicUnpolarizedIntensity
