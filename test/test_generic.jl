@@ -39,6 +39,20 @@ end
     @test X_K1430_BuggBW(1.1) ≈ 1.2297831004988296 + 0.20758230110948936im
 end
 
+@testset "KatchaevSigma as a string" begin
+    KatchaevSigma_lineshape = """
+    1.0 / (
+        0.1131 / (σ + 0.0073999) + 0.0337 - 
+        0.3185 * (σ / 0.982657846681 - 1.0) - 
+        0.0942 * (σ / 0.982657846681 - 1.0)^2 -
+        0.5927 * (σ / 0.982657846681 - 1.0)^3 - 
+            i * sqrt(1 - 4*0.13956755^2 / σ)
+        )
+    """
+    KatchaevSigma = parse_into_function(KatchaevSigma_lineshape)
+    @test KatchaevSigma(1.1) ≈ 0.10172436035046228 + 1.0273440332286132im
+end
+
 
 let
     dict = Dict(
