@@ -5,10 +5,20 @@ using Test
 
 
 @testset "BreitWigner from plane Dict" begin
-    d = Dict("type" => "BreitWigner", "name" => "L1520_BW", "mass" => 1.0, "width" => 0.1, "ma" => 0.0, "mb" => 0.0, "l" => 0, "d" => 1.5)
+    d = Dict("type" => "BreitWigner",
+        "name" => "L1520_BW",
+        "mass" => 1.0, "width" => 0.1,
+        "ma" => 0.0, "mb" => 0.0,
+        "l" => 0, "d" => 1.5, "x" => "m23sq")
     bw1 = dict2instance(BreitWigner, d)
-    @test bw1 isa HadronicLineshapes.AbstractFlexFunc
+    @test bw1 isa NamedArgFunc{<:HadronicLineshapes.AbstractFlexFunc,Vector{String},Vector{String}}
+    @test bw1(Dict("m23sq" => 1.1)) ≈ -5 + 5im
+    @test bw1(LittleDict("m23sq" => 1.1)) ≈ -5 + 5im
+    @test bw1(OrderedDict("m23sq" => 1.1)) ≈ -5 + 5im
+    @test_throws KeyError bw1(LittleDict("msq" => 1.1))
 end
+
+
 
 @testset "MomentumPower from plane Dict" begin
     d = Dict("type" => "MomentumPower", "l" => 5)
@@ -24,19 +34,19 @@ end
 end
 
 @testset "MultichannelBreitWigner from a nasted Dict" begin
-    d = LittleDict("type" => "MultichannelBreitWigner", "name" => "L1520_BW", "mass" => 1.0, "channels" => [LittleDict("gsq" => 0.1, "ma" => 0.0, "mb" => 0.0, "l" => 0, "d" => 1.5)])
+    d = LittleDict("type" => "MultichannelBreitWigner", "name" => "L1520_BW", "mass" => 1.0, "channels" => [LittleDict("gsq" => 0.1, "ma" => 0.0, "mb" => 0.0, "l" => 0, "d" => 1.5)], "x" => "msq")
     bw1 = dict2instance(MultichannelBreitWigner, d)
-    @test bw1 isa HadronicLineshapes.AbstractFlexFunc
+    @show typeof(bw1)
+    @test bw1 isa NamedArgFunc{<:HadronicLineshapes.AbstractFlexFunc,Vector{String},Vector{String}}
 end
 
 @testset "Deserialize MultichannelBreitWigner" begin
-    d = LittleDict("type" => "MultichannelBreitWigner", "name" => "L1520_BW", "mass" => 1.0,
+    d = LittleDict("type" => "MultichannelBreitWigner", "name" => "L1520_BW", "mass" => 1.0, "x" => "msq",
         "channels" => [
             LittleDict("gsq" => 1.1, "ma" => 0.1, "mb" => 0.2, "l" => 1, "d" => 1.5),
             LittleDict("gsq" => 2.1, "ma" => 1.0, "mb" => 2.0, "l" => 3, "d" => 1.5)])
     bw1 = dict2instance(MultichannelBreitWigner, d)
     dict, _ = serializeToDict(bw1)
-
     @test all(values(dict[:channels][1]) .== values(d["channels"][1]))
     @test all(values(dict[:channels][2]) .== values(d["channels"][2]))
 end

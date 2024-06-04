@@ -755,6 +755,7 @@
   "functions": [
     {
       "name": "L1405_Flatte",
+      "x": "m_Kp^2",
       "type": "MultichannelBreitWigner",
       "mass": 1.4051,
       "channels": [
@@ -776,6 +777,7 @@
     },
     {
       "name": "L1690_BW",
+      "x": "m_Kp^2",
       "l": 2,
       "mb": 0.938272046,
       "type": "BreitWigner",
@@ -786,6 +788,7 @@
     },
     {
       "name": "D1232_BW",
+      "x": "m_Kp^2",
       "l": 1,
       "mb": 0.13957018,
       "type": "BreitWigner",
@@ -796,6 +799,7 @@
     },
     {
       "name": "L1520_BW",
+      "x": "m_Kp^2",
       "l": 2,
       "mb": 0.938272046,
       "type": "BreitWigner",
@@ -806,6 +810,7 @@
     },
     {
       "name": "L1600_BW",
+      "x": "m_Kp^2",
       "l": 1,
       "mb": 0.938272046,
       "type": "BreitWigner",
@@ -816,6 +821,7 @@
     },
     {
       "name": "L2000_BW",
+      "x": "m_Kp^2",
       "l": 0,
       "mb": 0.938272046,
       "type": "BreitWigner",
@@ -826,6 +832,7 @@
     },
     {
       "name": "D1600_BW",
+      "x": "m_ppi^2",
       "l": 1,
       "mb": 0.13957018,
       "type": "BreitWigner",
@@ -836,6 +843,7 @@
     },
     {
       "name": "D1700_BW",
+      "x": "m_ppi^2",
       "l": 2,
       "mb": 0.13957018,
       "type": "BreitWigner",
@@ -846,6 +854,7 @@
     },
     {
       "name": "K892_BW",
+      "x": "m_Kpi^2",
       "l": 1,
       "mb": 0.493677,
       "type": "BreitWigner",
@@ -856,6 +865,7 @@
     },
     {
       "name": "K700_BuggBW",
+      "x": "m_Kpi^2",
       "slope": 0.94106,
       "type": "BreitWignerWidthExpLikeBugg",
       "mass": 0.824,
@@ -863,6 +873,7 @@
     },
     {
       "name": "K1430_BuggBW",
+      "x": "m_Kpi^2",
       "slope": 0.020981,
       "type": "BreitWignerWidthExpLikeBugg",
       "mass": 1.375,
@@ -870,6 +881,7 @@
     },
     {
       "name": "L1670_BW",
+      "x": "m_Kp^2",
       "l": 0,
       "mb": 0.938272046,
       "type": "BreitWigner",
