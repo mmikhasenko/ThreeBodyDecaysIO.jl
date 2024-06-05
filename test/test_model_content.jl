@@ -51,11 +51,11 @@ end
     Γ::Float64
     γ::Float64
 end
-function (BW::BreitWignerWidthExpLikeBugg)(σ)
+function (bw::BreitWignerWidthExpLikeBugg)(σ)
     mK = 0.493677
     mπ = 0.13957018
     σA = mK^2 - mπ^2 / 2
-    @unpack m, Γ, γ = BW
+    @unpack m, Γ, γ = bw
     Γt = (σ - σA) / (m^2 - σA) * Γ * exp(-γ * σ)
     1 / (m^2 - σ - 1im * m * Γt)
 end

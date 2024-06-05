@@ -34,9 +34,10 @@ end
 
 function dict2instance(::Type{Polynomial}, dict::AbstractDict)
     @unpack coefficients, x = dict
-    bw = Polynomial(coefficients, Symbol(x))
+    P = Polynomial(coefficients, Symbol(x))
+    arithmetic_P = WrapFlexFunction(P)
     variables = [x]
-    NamedArgFunc(bw, variables)
+    NamedArgFunc(arithmetic_P, variables)
 end
 
 # ## Functions of p

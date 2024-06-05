@@ -35,7 +35,7 @@ model = let
     ch1 = DecayChain(;
         k=1,
         two_j,
-        Xlineshape=BW(1.1, 0.1),
+        Xlineshape=BreitWigner(1.1, 0.1),
         Hij=RecouplingLS((two_j, 0)),
         HRk=RecouplingLS((two_j, two_j)),
         tbs)

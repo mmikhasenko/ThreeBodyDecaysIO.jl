@@ -55,6 +55,8 @@ end
         "x" => "m23sq")
     bw1 = dict2instance(Polynomial, d)
     @test bw1.f(1) == 6
+    fsq = bw1.f * WrapFlexFunction(x -> 3x)
+    @test fsq(1) == 18
     @test bw1(Dict("m23sq" => 1)) == 6
-    @test bw1 isa NamedArgFunc{<:Polynomial}
+    @test bw1 isa NamedArgFunc{<:HadronicLineshapes.AbstractFlexFunc}
 end

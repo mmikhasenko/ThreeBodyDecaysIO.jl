@@ -29,11 +29,7 @@ export HadronicUnpolarizedIntensity
 include("HadronicUnpolarizedIntensity.jl")
 
 export dict2instance
-# export dict2recoupling
 include("reader.jl")
-
-export BW
-include("lineshapes.jl")
 
 export reorder
 export array2dict

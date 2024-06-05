@@ -14,7 +14,7 @@ model = let
     ch1 = DecayChain(;
         k=1,
         two_j,
-        Xlineshape=BW(1.1, 0.1),
+        Xlineshape=BreitWigner(1.1, 0.1),
         Hij=RecouplingLS((two_j, 0)),
         HRk=RecouplingLS((two_j, two_j)),
         tbs)
@@ -30,7 +30,7 @@ function lineshape_parser(Xlineshape)
     appendix = Dict()
 
     scattering, a = "K892_BW", Dict(
-        "K892_BW" => serializeToDict(Xlineshape)[1])
+        "K892_BW" => serializeToDict(NamedArgFunc(Xlineshape, ["m12"]))[1])
     merge!(appendix, a)
     FF_decay = "BlattWeisskopf(resonance)"
     FF_production = "BlattWeisskopf(b-decay)"
