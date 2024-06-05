@@ -1,7 +1,7 @@
 name = "ThreeBodyDecaysIO"
 uuid = "418e7ecf-680e-4cb5-ad61-5e2f006aefac"
 authors = ["Mikhail Mikhasenko <mikhail.mikhasenko@cern.ch>"]
-version = "0.4.1"
+version = "0.4.2"
 
 [deps]
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
@@ -10,6 +10,7 @@ JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
 MacroTools = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
 OrderedCollections = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
 Parameters = "d96e819e-fc66-5662-9728-84c9c7592b0a"
+Polynomials = "f27b6e38-b328-58d1-80ce-0feddd5e7a45"
 ThreeBodyDecays = "e6563dab-9ca1-5843-bde3-2ccf38d63843"
 
 [compat]

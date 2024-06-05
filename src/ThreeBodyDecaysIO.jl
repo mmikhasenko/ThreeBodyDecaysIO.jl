@@ -10,6 +10,10 @@ using DataFrames
 using HadronicLineshapes
 using MacroTools
 
+import Polynomials: Polynomial
+export Polynomial
+
+
 export serializeToDict
 export add_hs3_fields
 export trivial_lineshape_parser

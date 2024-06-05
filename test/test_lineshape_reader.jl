@@ -18,8 +18,6 @@ using Test
     @test_throws KeyError bw1(LittleDict("msq" => 1.1))
 end
 
-
-
 @testset "MomentumPower from plane Dict" begin
     d = Dict("type" => "MomentumPower", "l" => 5)
     ff1 = dict2instance(MomentumPower, d)
@@ -51,3 +49,12 @@ end
     @test all(values(dict[:channels][2]) .== values(d["channels"][2]))
 end
 
+@testset "Polynomial from plane Dict" begin
+    d = Dict(
+        "coefficients" => [1.0, 2.0, 3.0],
+        "x" => "m23sq")
+    bw1 = dict2instance(Polynomial, d)
+    @test bw1.f(1) == 6
+    @test bw1(Dict("m23sq" => 1)) == 6
+    @test bw1 isa NamedArgFunc{<:Polynomial}
+end

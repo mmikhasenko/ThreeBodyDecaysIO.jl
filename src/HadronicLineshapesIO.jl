@@ -32,6 +32,12 @@ function dict2instance(::Type{MultichannelBreitWigner}, dict::AbstractDict)
     return NamedArgFunc(bw, variables)
 end
 
+function dict2instance(::Type{Polynomial}, dict::AbstractDict)
+    @unpack coefficients, x = dict
+    bw = Polynomial(coefficients, Symbol(x))
+    variables = [x]
+    NamedArgFunc(bw, variables)
+end
 
 # ## Functions of p
 
