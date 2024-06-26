@@ -67,3 +67,21 @@ let
     end
 end
 
+
+@testset "generic with arguments" begin
+    d = Dict(
+        "type" => "generic_function",
+        "expression" => "(m_12 + a) / (m_12 + b)",
+        "a" => 1.0,
+        "b" => -3.0
+    )
+    f = dict2instance(generic_function, d)
+    f.f(1.1) ≈ (1.1 + 1) / (1.1 + -3)
+    # 
+    d = Dict(
+        "type" => "generic_function",
+        "expression" => "(m_12 + 1) / (m_12 - 3)",
+    )
+    g = dict2instance(generic_function, d)
+    g.f(2.2) ≈ -4
+end

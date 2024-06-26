@@ -46,7 +46,13 @@ struct generic_function end
 
 function dict2instance(::Type{generic_function}, dict)
     @unpack expression = dict
-    parsed_expression = Meta.parse(make_julia_complex(expression))
+    d = copy(dict)
+    # 
+    pop!(d, "type")
+    pop!(d, "expression")
+    updated_expression = replace(expression, (k => "($v)" for (k, v) in d)...)
+    # 
+    parsed_expression = Meta.parse(make_julia_complex(updated_expression))
     f = parse_into_function(parsed_expression)
     arg = expression_argument(parsed_expression)
     NamedArgFunc(WrapFlexFunction(f), [string(arg)])
