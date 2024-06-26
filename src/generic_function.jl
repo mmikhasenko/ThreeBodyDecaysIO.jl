@@ -29,31 +29,37 @@ function expression_argument(expr)
     return first(args)
 end
 
-parse_into_function(expression::String) = parse_into_function(Meta.parse(make_julia_complex(expression)))
-
-function parse_into_function(expression::Expr)
-    # Collect symbols from the parsed expression
-    symbols = collect_nonregistered_symbols(expression)
-    # Ensure there is only one symbol
-    @assert length(symbols) == 1 "There are multiple symbols in the expression: $symbols"
-    symbol = first(symbols)
-    f = eval(Expr(:->, Symbol(symbol), expression))
-    return f
+function print_function(body, arg, pars)
+    fdef_str = "$arg -> begin\n"
+    map(Tuple(keys(pars))) do k
+        fdef_str *= "$k = $(pars[k])\n"
+    end
+    fdef_str *= "$(body)\n end"
+    # 
+    return fdef_str
 end
 
+function parse_into_function(body, pars=Dict("i" => 1im))
+    all_symbols = expression_arguments(Meta.parse(body))
+    variables = [s for s in all_symbols if !haskey(pars, string(s))]
+    @assert length(variables) == 1 "Number of undefined variables more than one: variables=$variables"
+    arg = variables[1]
+    # 
+    fdef_str = print_function(body, arg, pars)
+    fdef = Meta.parse(fdef_str)
+    f = eval(fdef)
+    f, arg
+end
 
 struct generic_function end
 
 function dict2instance(::Type{generic_function}, dict)
     @unpack expression = dict
-    d = copy(dict)
-    # 
-    pop!(d, "type")
-    pop!(d, "expression")
-    updated_expression = replace(expression, (k => "($v)" for (k, v) in d)...)
-    # 
-    parsed_expression = Meta.parse(make_julia_complex(updated_expression))
-    f = parse_into_function(parsed_expression)
-    arg = expression_argument(parsed_expression)
-    NamedArgFunc(WrapFlexFunction(f), [string(arg)])
+    parameters_dict = Dict{String,Any}(dict)
+    pop!(parameters_dict, "type")
+    pop!(parameters_dict, "expression")
+    parameters_dict["i"] = 1im
+    f, arg = parse_into_function(expression, parameters_dict)
+    # arg = expression_argument(parsed_expression)
+    return NamedArgFunc(WrapFlexFunction(f), [string(arg)])
 end
