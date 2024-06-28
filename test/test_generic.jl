@@ -89,13 +89,11 @@ end
     # 
     d = Dict(
         "type" => "generic_function",
-        "expression" => "x+l*log(x)-2*o",
+        "expression" => "x+l*log(x)-2*o+g",
         "l" => 2.0,
-        "o" => -3.0
+        "o" => -3.0,
+        "g" => 1.5
     )
     g = dict2instance(generic_function, d)
-    @test g(Dict("x" => 3)) ≈ 3 + 2 * log(3) - 2 * (-3)
+    @test g(Dict("x" => 3)) ≈ 3 + 2 * log(3) - 2 * (-3) + 1.5
 end
-
-
-
