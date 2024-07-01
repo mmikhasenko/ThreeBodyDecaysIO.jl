@@ -1,7 +1,7 @@
 name = "ThreeBodyDecaysIO"
 uuid = "418e7ecf-680e-4cb5-ad61-5e2f006aefac"
 authors = ["Mikhail Mikhasenko <mikhail.mikhasenko@cern.ch>"]
-version = "0.5.0"
+version = "0.6.0"
 
 [deps]
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"

@@ -1,10 +1,11 @@
-
 # ThreeBodyDecaysIO
 
 ## Overview
+
 `ThreeBodyDecaysIO` is a Julia module designed for the serialization and deserialization of models related to three-body decays in particle physics. It leverages the `ThreeBodyDecays` framework to provide comprehensive support for reading and writing model descriptions, facilitating the exchange of complex decay models and their kinematic configurations.
 
 ## Features
+
 - Serialization and deserialization of three-body decay models to and from JSON format.
 - Support for detailed kinematics, lineshapes, and interaction chains descriptions.
 - Utilities for validation and manipulation of model components.

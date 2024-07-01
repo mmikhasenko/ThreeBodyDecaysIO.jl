@@ -16,10 +16,10 @@ function dict2instance(::Type{ThreeBodySystem}, dict::Dict)
 
     # Create DataFrame
     df = DataFrame(
-        indices=[initial_index; final_indices],
-        names=[initial_name; final_names],
-        spins=[initial_spin; final_spins],
-        masses=[initial_mass; final_masses]
+        indices = [initial_index; final_indices],
+        names = [initial_name; final_names],
+        spins = [initial_spin; final_spins],
+        masses = [initial_mass; final_masses],
     )
 
     sort!(df, :indices)
@@ -29,9 +29,9 @@ function dict2instance(::Type{ThreeBodySystem}, dict::Dict)
         error("Expected indices 0,1,...,$N for the reaction with N final particles")
     N != 3 && error("ThreeBodyDecays.jl only works with three-body systems only")
 
-    ms = ThreeBodyMasses(df.masses[2:end]...; m0=df.masses[1])
+    ms = ThreeBodyMasses(df.masses[2:end]...; m0 = df.masses[1])
     two_spins = df.spins .|> x2
-    two_js = ThreeBodySpins(two_spins[2:end]...; two_h0=two_spins[1])
+    two_js = ThreeBodySpins(two_spins[2:end]...; two_h0 = two_spins[1])
 
     tbs = ThreeBodySystem(ms, two_js)
     return tbs
@@ -39,34 +39,44 @@ end
 
 
 
-function dict2instance(::Type{DecayChain}, dict; tbs, workspace=Dict())
+function dict2instance(::Type{DecayChain}, dict; tbs, workspace = Dict())
     coupling = string2complex(dict["weight"])
     name = dict["name"]
-    # 
+    #
     @unpack vertices, propagators = dict
     @unpack topology = dict
-    # 
+    #
     k = topology2k(topology)
     i, j = ij_from_k(k)
-    # spin of suchannel resonance
+    # spin of subchannel resonance
     resonance = first(propagators)
     @assert resonance["node"] == [i, j]
-    # 
+    #
     spin = resonance["spin"]
     two_j = spin |> x2
     two_js = tbs.two_js
-    # build two vertices manualy
+    # build two vertices manually
     ind_ij = findfirst(v -> v["node"] == [i, j], vertices)
     vertex_ij = vertices[ind_ij]
-    Hij = dict2instance(ThreeBodyDecays.Recoupling, vertex_ij, (; two_j_fin=[two_js[i], two_js[j]], two_j_ini=two_j))
-    # 
+    Hij = dict2instance(
+        ThreeBodyDecays.Recoupling,
+        vertex_ij,
+        (; two_j_fin = [two_js[i], two_js[j]], two_j_ini = two_j),
+    )
+    #
     ind_Rk = findfirst(v -> v["node"] == [[i, j], k], vertices)
     vertex_Rk = vertices[ind_Rk]
-    HRk = dict2instance(ThreeBodyDecays.Recoupling, vertex_Rk, (; two_j_fin=[two_j, two_js[k]], two_j_ini=two_js[4]))
+    HRk = dict2instance(
+        ThreeBodyDecays.Recoupling,
+        vertex_Rk,
+        (; two_j_fin = [two_j, two_js[k]], two_j_ini = two_js[4]),
+    )
 
     # build lineshape
     scattering = resonance["parametrization"]
-    scattering isa Dict && error("Deserialization of lineshape directly from the chains is not implemented yet. Use `functions` field instead.")
+    scattering isa Dict && error(
+        "Deserialization of lineshape directly from the chains is not implemented yet. Use `functions` field instead.",
+    )
     !(scattering isa String) && error("The scattering should be a string. Got: $scattering")
     X = workspace[scattering].f
     if vertex_Rk["formfactor"] != ""
@@ -85,7 +95,7 @@ function dict2instance(::Type{DecayChain}, dict; tbs, workspace=Dict())
         FF_ij_svf = FF_ij(q)
         X *= FF_ij_svf
     end
-    chain = DecayChain(; k, two_j, Xlineshape=X, Hij, HRk, tbs)
+    chain = DecayChain(; k, two_j, Xlineshape = X, Hij, HRk, tbs)
     (; coupling, chain, name)
 end
 
@@ -98,8 +108,11 @@ function dict2instance(::Type{ThreeBodyDecay}, decay_description; workspace)
     @unpack kinematics, chains = decay_description
     tbs = dict2instance(ThreeBodySystem, kinematics)
     df = dict2instance.(DecayChain, chains; tbs, workspace) |> DataFrame
-    model = ThreeBodyDecay(Vector{Pair{String,Tuple{Complex,AbstractDecayChain}}}(
-        df.name .=> zip(df.coupling, df.chain)))
+    model = ThreeBodyDecay(
+        Vector{Pair{String,Tuple{Complex,AbstractDecayChain}}}(
+            df.name .=> zip(df.coupling, df.chain),
+        ),
+    )
     return model
 end
 
@@ -108,7 +121,7 @@ function dict2instance(::Type{ThreeBodyDecays.Recoupling}, dict, properties)
         @unpack l, s = dict
         two_ja, two_jb = properties.two_j_fin
         @unpack two_j_ini = properties
-        return RecouplingLS(; two_ls=(l, s) .|> x2)
+        return RecouplingLS(; two_ls = (l, s) .|> x2)
     end
     if dict["type"] == "helicity"
         @unpack helicities = dict
@@ -124,4 +137,3 @@ function dict2instance(::Type{ThreeBodyDecays.Recoupling}, dict, properties)
     end
     error("Unknown type: $(dict["type"])")
 end
-

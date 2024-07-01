@@ -5,11 +5,17 @@ using Test
 
 
 @testset "BreitWigner from plane Dict" begin
-    d = Dict("type" => "BreitWigner",
+    d = Dict(
+        "type" => "BreitWigner",
         "name" => "L1520_BW",
-        "mass" => 1.0, "width" => 0.1,
-        "ma" => 0.0, "mb" => 0.0,
-        "l" => 0, "d" => 1.5, "x" => "m23sq")
+        "mass" => 1.0,
+        "width" => 0.1,
+        "ma" => 0.0,
+        "mb" => 0.0,
+        "l" => 0,
+        "d" => 1.5,
+        "x" => "m23sq",
+    )
     bw1 = dict2instance(BreitWigner, d)
     @test bw1 isa NamedArgFunc{<:HadronicLineshapes.AbstractFlexFunc}
     @test bw1(Dict("m23sq" => 1.1)) ≈ -5 + 5im
@@ -31,18 +37,31 @@ end
     @test bw1 isa HadronicLineshapes.BlattWeisskopf
 end
 
-@testset "MultichannelBreitWigner from a nasted Dict" begin
-    d = LittleDict("type" => "MultichannelBreitWigner", "name" => "L1520_BW", "mass" => 1.0, "channels" => [LittleDict("gsq" => 0.1, "ma" => 0.0, "mb" => 0.0, "l" => 0, "d" => 1.5)], "x" => "msq")
+@testset "MultichannelBreitWigner from a nested Dict" begin
+    d = LittleDict(
+        "type" => "MultichannelBreitWigner",
+        "name" => "L1520_BW",
+        "mass" => 1.0,
+        "channels" =>
+            [LittleDict("gsq" => 0.1, "ma" => 0.0, "mb" => 0.0, "l" => 0, "d" => 1.5)],
+        "x" => "msq",
+    )
     bw1 = dict2instance(MultichannelBreitWigner, d)
     @show typeof(bw1)
     @test bw1 isa NamedArgFunc{<:HadronicLineshapes.AbstractFlexFunc}
 end
 
 @testset "Deserialize MultichannelBreitWigner" begin
-    d = LittleDict("type" => "MultichannelBreitWigner", "name" => "L1520_BW", "mass" => 1.0, "x" => "msq",
+    d = LittleDict(
+        "type" => "MultichannelBreitWigner",
+        "name" => "L1520_BW",
+        "mass" => 1.0,
+        "x" => "msq",
         "channels" => [
             LittleDict("gsq" => 1.1, "ma" => 0.1, "mb" => 0.2, "l" => 1, "d" => 1.5),
-            LittleDict("gsq" => 2.1, "ma" => 1.0, "mb" => 2.0, "l" => 3, "d" => 1.5)])
+            LittleDict("gsq" => 2.1, "ma" => 1.0, "mb" => 2.0, "l" => 3, "d" => 1.5),
+        ],
+    )
     bw1 = dict2instance(MultichannelBreitWigner, d)
     dict, _ = serializeToDict(bw1)
     @test all(values(dict[:channels][1]) .== values(d["channels"][1]))
@@ -50,9 +69,7 @@ end
 end
 
 @testset "Polynomial from plane Dict" begin
-    d = Dict(
-        "coefficients" => [1.0, 2.0, 3.0],
-        "x" => "m23sq")
+    d = Dict("coefficients" => [1.0, 2.0, 3.0], "x" => "m23sq")
     bw1 = dict2instance(Polynomial, d)
     @test bw1.f(1) == 6
     fsq = bw1.f * WrapFlexFunction(x -> 3x)
