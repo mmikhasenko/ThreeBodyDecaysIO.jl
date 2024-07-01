@@ -22,10 +22,12 @@ string2complex(s) = eval(Meta.parse(replace(s, "i" => "im")))
 
 function topology2k(topology::AbstractArray)
     indices = fully_flatten(topology)
-    length(indices) != 3 && error("Topology with more that three particles is not implemented")
-    !(topology ∈ ([[1, 2], 3], [[2, 3], 1], [[3, 1], 2])) &&
-        error("Only regular topologies [[1, 2], 3], [[2, 3], 1], [[3, 1], 2] are implememnted")
-    # 
+    length(indices) != 3 &&
+        error("Topology with more that three particles is not implemented")
+    !(topology ∈ ([[1, 2], 3], [[2, 3], 1], [[3, 1], 2])) && error(
+        "Only regular topologies [[1, 2], 3], [[2, 3], 1], [[3, 1], 2] are implememnted",
+    )
+    #
     return topology[2]
 end
 
@@ -35,7 +37,7 @@ function reorder(last_index)
     t -> invpermute!(collect(t), [i, j, k]) |> Tuple
 end
 
-function array2dict(a::AbstractArray; key, apply=identity)
+function array2dict(a::AbstractArray; key, apply = identity)
     map(a) do p
         _p = copy(p)
         _key = p[key]
@@ -64,7 +66,7 @@ flatten_topology(topology) =
     topology isa Array ? vcat(flatten_topology.(topology)...) : topology
 
 
-function label_diff(diff; levels=[1e-2, 1e-12])
+function label_diff(diff; levels = [1e-2, 1e-12])
     _diff = abs(diff)
     _diff < levels[2] && return '🟢'
     _diff < levels[1] && return '🟡'

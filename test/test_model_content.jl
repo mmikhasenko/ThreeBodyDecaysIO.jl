@@ -18,18 +18,18 @@ let
         input = open(test_file_name) do io
             JSON.parse(io)
         end
-        model_descrition = first(input["distributions"])
-        @test model_descrition["type"] == "HadronicUnpolarizedIntensity"
+        model_description = first(input["distributions"])
+        @test model_description["type"] == "HadronicUnpolarizedIntensity"
 
-        @test haskey(model_descrition, "decay_description")
-        @unpack decay_description = model_descrition
+        @test haskey(model_description, "decay_description")
+        @unpack decay_description = model_description
 
         @test haskey(decay_description, "reference_topology")
         @unpack reference_topology = decay_description
 
         @test flatten_topology(reference_topology) |> sort == [1, 2, 3]
 
-        @info "🐰 Parcing kinamatics 🐰"
+        @info "🐰 Parsing kinematics 🐰"
         @unpack kinematics = decay_description
         tbs = dict2instance(ThreeBodySystem, kinematics)
 
@@ -45,7 +45,7 @@ end
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
-# extra likeshapes for testing
+# extra lineshapes for testing
 @with_kw struct BreitWignerWidthExpLikeBugg <: HadronicLineshapes.AbstractFlexFunc
     m::Float64
     Γ::Float64
@@ -76,7 +76,7 @@ let
         end
 
         @info "🔥 Building lineshapes functions 🔥"
-        workspace = Dict{String,Any}()
+        workspace = Dict{String, Any}()
         @unpack functions = input
         for fn in functions
             @unpack name, type = fn
@@ -103,17 +103,20 @@ let
         @testset "Validation" begin
             map(amplitude_model_checksums) do check_point_info
                 @unpack name, value, distribution = check_point_info
-                # 
+                #
                 # pull distribution
                 dist = workspace[distribution]
 
                 # pull correct parameter point
-                parameter_points_dict = array2dict(parameter_points; key="name")
+                parameter_points_dict = array2dict(parameter_points; key = "name")
                 # find the point in the list of points
                 parameter_point = parameter_points_dict[name]
                 # compute, compare
-                _parameters = array2dict(parameter_point["parameters"];
-                    key="name", apply=v -> v["value"])
+                _parameters = array2dict(
+                    parameter_point["parameters"];
+                    key = "name",
+                    apply = v -> v["value"],
+                )
                 @test value ≈ dist(_parameters)
                 return "🟢"
             end

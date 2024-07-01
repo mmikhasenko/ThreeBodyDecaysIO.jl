@@ -2,12 +2,42 @@
 make_julia_complex(expr) = replace(string(expr), r"(?<![a-zA-Z])i(?![a-zA-Z])" => "im")
 
 const operator_symbols = Set([
-    :+, :-, :*, :/, :%, :^,
-    :im, :i,
-    :sin, :log, :cos, :tan, :asin, :acos, :atan,
-    :sinh, :cosh, :tanh, :asinh, :acosh, :atanh,
-    :exp, :sqrt, :abs, :real, :imag, :conj, :pow, :log10, :angle, :abs2,
-    :sign, :round, :trunc, :floor, :ceil
+    :+,
+    :-,
+    :*,
+    :/,
+    :%,
+    :^,
+    :im,
+    :i,
+    :sin,
+    :log,
+    :cos,
+    :tan,
+    :asin,
+    :acos,
+    :atan,
+    :sinh,
+    :cosh,
+    :tanh,
+    :asinh,
+    :acosh,
+    :atanh,
+    :exp,
+    :sqrt,
+    :abs,
+    :real,
+    :imag,
+    :conj,
+    :pow,
+    :log10,
+    :angle,
+    :abs2,
+    :sign,
+    :round,
+    :trunc,
+    :floor,
+    :ceil,
 ])
 
 # Step 2: Function to traverse the syntax tree and collect symbols using MacroTools
@@ -35,16 +65,16 @@ function print_function(body, arg, pars)
         fdef_str *= "$k = $(pars[k])\n"
     end
     fdef_str *= "$(body)\n end"
-    # 
+    #
     return fdef_str
 end
 
-function parse_into_function(body, pars=Dict("i" => 1im))
+function parse_into_function(body, pars = Dict("i" => 1im))
     all_symbols = expression_arguments(Meta.parse(body))
     variables = [s for s in all_symbols if !haskey(pars, string(s))]
     @assert length(variables) == 1 "Number of undefined variables more than one: variables=$variables"
     arg = variables[1]
-    # 
+    #
     fdef_str = print_function(body, arg, pars)
     fdef = Meta.parse(fdef_str)
     f = eval(fdef)

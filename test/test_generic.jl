@@ -4,7 +4,7 @@ using Parameters
 using Test
 
 e(x) = 1 / (0.77^2 - x - 1im * 0.77 * 0.15 * sin(x))
-# 
+#
 expression = "1/(0.77^2 - x - i*0.77*0.15*sin(x))"
 
 @test expression_argument(Meta.parse(expression)) == :x
@@ -15,17 +15,17 @@ parse_into_function(expression)
 @testset "Parse into a function works" begin
     f, _ = parse_into_function(expression)
     @test f(1.1) == e(1.1)
-    # 
+    #
     f, _ = parse_into_function(expression * "*8")
     @test f(1.1) == e(1.1) * 8
-    # 
+    #
     @test_throws "Number of undefined variables" parse_into_function(expression * "*y")
 end
 
 @testset "BreitWignerWidthExpLikeBugg as a string" begin
 
     K700_BuggBW_lineshape = """
-    1/(0.824^2 - σ - i * 0.824 * 
+    1/(0.824^2 - σ - i * 0.824 *
         (σ - 0.23397706275638377) / (0.824^2 - 0.23397706275638377) * 0.478 * exp(-0.941060 * σ))
     """
 
@@ -44,10 +44,10 @@ end
 @testset "KatchaevSigma as a string" begin
     KatchaevSigma_lineshape = """
     1.0 / (
-        0.1131 / (σ + 0.0073999) + 0.0337 - 
-        0.3185 * (σ / 0.982657846681 - 1.0) - 
+        0.1131 / (σ + 0.0073999) + 0.0337 -
+        0.3185 * (σ / 0.982657846681 - 1.0) -
         0.0942 * (σ / 0.982657846681 - 1.0)^2 -
-        0.5927 * (σ / 0.982657846681 - 1.0)^3 - 
+        0.5927 * (σ / 0.982657846681 - 1.0)^3 -
             i * sqrt(1 - 4*0.13956755^2 / σ)
         )
     """
@@ -59,7 +59,7 @@ end
 let
     dict = Dict(
         "type" => "generic_function",
-        "expression" => "1/(0.77^2 - x - i*0.77*0.15*sin(x))"
+        "expression" => "1/(0.77^2 - x - i*0.77*0.15*sin(x))",
     )
     @unpack type = dict
     instance_type = eval(Symbol(type))
@@ -75,24 +75,21 @@ end
         "type" => "generic_function",
         "expression" => "(m_12 + a) / (m_12 + b)",
         "a" => 1.0,
-        "b" => -3.0
+        "b" => -3.0,
     )
     f = dict2instance(generic_function, d)
     @test f.f(1.1) ≈ (1.1 + 1) / (1.1 + -3)
-    # 
-    d = Dict(
-        "type" => "generic_function",
-        "expression" => "(m_12 + 1) / (m_12 - 3)",
-    )
+    #
+    d = Dict("type" => "generic_function", "expression" => "(m_12 + 1) / (m_12 - 3)")
     g = dict2instance(generic_function, d)
     @test g.f(2.2) ≈ -4
-    # 
+    #
     d = Dict(
         "type" => "generic_function",
         "expression" => "x+l*log(x)-2*o+g",
         "l" => 2.0,
         "o" => -3.0,
-        "g" => 1.5
+        "g" => 1.5,
     )
     g = dict2instance(generic_function, d)
     @test g(Dict("x" => 3)) ≈ 3 + 2 * log(3) - 2 * (-3) + 1.5

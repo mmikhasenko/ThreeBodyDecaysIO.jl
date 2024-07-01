@@ -76,17 +76,17 @@ end
 # map(amplitude_model_checksums) do check_point_info
 let check_point_info = amplitude_model_checksums[1]
     @unpack name, value, distribution = check_point_info
-    # 
+    #
     # pull distribution
     dist = workspace[distribution]
 
     # pull correct parameter point
-    parameter_points_dict = array2dict(parameter_points; key="name")
+    parameter_points_dict = array2dict(parameter_points; key = "name")
     # find the point in the list of points
     parameter_point = parameter_points_dict[name]
     # compute, compare
-    _parameters = array2dict(parameter_point["parameters"];
-        key="name", apply=v -> v["value"])
+    _parameters =
+        array2dict(parameter_point["parameters"]; key = "name", apply = v -> v["value"])
     @assert value ≈ dist(_parameters) "Check-point validation failed with $distribution 🥕"
     return "🟢"
 end
