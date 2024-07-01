@@ -61,7 +61,7 @@ function serializeToDict(obj::NamedArgFunc{BreitWigner})
     @unpack f, variable_names = obj
     @unpack ma, mb, l, d = f
     x = first(variable_names)
-    dict = LittleDict{Symbol,Any}(pairs((; type, mass=f.m, width=f.Γ, ma, mb, l, d, x)))
+    dict = LittleDict{Symbol,Any}(pairs((; type, mass = f.m, width = f.Γ, ma, mb, l, d, x)))
     appendix = Dict()
     return (dict, appendix)
 end
@@ -75,7 +75,7 @@ function serializeToDict(obj::NamedArgFunc{<:MultichannelBreitWigner})
         LittleDict{Symbol,Any}(pairs((; gsq, ma, mb, l, d)))
     end
     appendix = Dict()
-    dict = LittleDict{Symbol,Any}(pairs((; type, mass=m, channels=_channels, x)))
+    dict = LittleDict{Symbol,Any}(pairs((; type, mass = m, channels = _channels, x)))
     return (dict, appendix)
 end
 

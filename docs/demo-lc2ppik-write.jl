@@ -13,30 +13,27 @@ model = published_model("Default amplitude model")
 function lineshape_parser(Xlineshape::BreitWignerMinL)
     appendix = Dict()
     Xlineshape_str = Xlineshape.name * "_BW"
-    scattering, a = Xlineshape_str, Dict(
+    scattering, a = Xlineshape_str,
+    Dict(
         Xlineshape_str => Dict(
             :type => "BreitWigner",
             :mass => Xlineshape.pars.m,
             :width => Xlineshape.pars.Γ,
             :l => Xlineshape.l,
             :ma => Xlineshape.m1,
-            :mb => Xlineshape.m2))
+            :mb => Xlineshape.m2,
+        ),
+    )
     merge!(appendix, a)
     FF_production = "BlattWeisskopf(resonance)"
     FF_decay = "BlattWeisskopf(b-decay)"
     # hard coded
     dR, dΛc = 1.5, 5.0 # /GeV
     a = Dict(
-        "BlattWeisskopf(resonance)" => Dict(
-            :type => "BlattWeisskopf",
-            :radius => dR,
-            :l => Xlineshape.l
-        ),
-        "BlattWeisskopf(b-decay)" => Dict(
-            :type => "BlattWeisskopf",
-            :radius => dΛc,
-            :l => 0
-        )
+        "BlattWeisskopf(resonance)" =>
+            Dict(:type => "BlattWeisskopf", :radius => dR, :l => Xlineshape.l),
+        "BlattWeisskopf(b-decay)" =>
+            Dict(:type => "BlattWeisskopf", :radius => dΛc, :l => 0),
     )
     merge!(appendix, a)
     (; scattering, FF_production, FF_decay), appendix
@@ -45,11 +42,14 @@ end
 function lineshape_parser(Xlineshape::Flatte1405)
     appendix = Dict()
     Xlineshape_str = Xlineshape.name * "_Flatte"
-    scattering, a = Xlineshape_str, Dict(
+    scattering, a = Xlineshape_str,
+    Dict(
         Xlineshape_str => Dict(
             :type => typeof(Xlineshape),
             :mass => Xlineshape.pars.m,
-            :width => Xlineshape.pars.Γ))
+            :width => Xlineshape.pars.Γ,
+        ),
+    )
     merge!(appendix, a)
     FF_production = ""
     FF_decay = ""
@@ -59,12 +59,15 @@ end
 function lineshape_parser(Xlineshape::BuggBreitWignerMinL)
     appendix = Dict()
     Xlineshape_str = Xlineshape.name * "_BuggBW"
-    scattering, a = Xlineshape_str, Dict(
+    scattering, a = Xlineshape_str,
+    Dict(
         Xlineshape_str => Dict(
             :type => typeof(Xlineshape),
             :mass => Xlineshape.pars.m,
             :width => Xlineshape.pars.Γ,
-            :gamma => Xlineshape.pars.γ))
+            :gamma => Xlineshape.pars.γ,
+        ),
+    )
     merge!(appendix, a)
     FF_production = ""
     FF_decay = ""
@@ -78,7 +81,7 @@ lineshape_parser(model.chains[end].Xlineshape) isa Tuple
 dict, appendix = serializeToDict(model; lineshape_parser)
 dict[:kinematics][:names] = ["p", "pi", "K", "Lc"]
 dict[:functions] = [(v[:name] = k; v) for (k, v) in appendix]
-# 
+#
 test_file_name = "lc2ppi-test.json"
 open(test_file_name, "w") do io
     JSON.print(io, dict, 4)
