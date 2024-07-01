@@ -97,7 +97,7 @@ end
 input = copy(json_content)
 
 workspace = let
-    _workspace = Dict{String, Any}()
+    _workspace = Dict{String,Any}()
     @unpack functions = input
     for fn in functions
         @show fn

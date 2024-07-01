@@ -21,7 +21,7 @@ function angles_invariants(mass_angles_cascade, ms; k)
     #
     _σj = σjofk(_cosθij, _σk, ms^2; k)
     _σi = sum(ms^2) - _σk - _σj
-    σs = (_σi, _σj, _σk) |> reorder(k) |> MandestamTuple{Float64}
+    σs = (_σi, _σj, _σk) |> reorder(k) |> MandelstamTuple{Float64}
     (α = _α, cosβ = _cosβ, γ = _γ), σs
 end
 
@@ -38,7 +38,7 @@ function validation_fields(model, point::NamedTuple{(:m, :cosθ)}; k, point_name
 end
 
 
-function validation_fields(model, σs::MandestamTuple; k, point_name, model_name)
+function validation_fields(model, σs::MandelstamTuple; k, point_name, model_name)
     i, j = ij_from_k(k)
     mk = sqrt(σs[k])
     #

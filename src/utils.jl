@@ -6,7 +6,7 @@ function update2values(x, ref)
         return ref[x]
     end
     if x isa Dict
-        _d = Dict{String,Any}()
+        _d = Dict{String, Any}()
         for (k, v) in x
             _d[k] = update2values(v, ref)
         end
@@ -25,7 +25,7 @@ function topology2k(topology::AbstractArray)
     length(indices) != 3 &&
         error("Topology with more that three particles is not implemented")
     !(topology ∈ ([[1, 2], 3], [[2, 3], 1], [[3, 1], 2])) && error(
-        "Only regular topologies [[1, 2], 3], [[2, 3], 1], [[3, 1], 2] are implememnted",
+        "Only regular topologies [[1, 2], 3], [[2, 3], 1], [[3, 1], 2] are implemented",
     )
     #
     return topology[2]

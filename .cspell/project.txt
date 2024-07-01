@@ -4,9 +4,11 @@ Bugg
 colorbar
 compat
 costheta
+cosβ
 cosζ
 cosζj
 cosζk
+cosθk
 Dalitz
 doublearg
 eachslice

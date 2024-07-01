@@ -48,14 +48,14 @@ function dict2instance(::Type{DecayChain}, dict; tbs, workspace = Dict())
     #
     k = topology2k(topology)
     i, j = ij_from_k(k)
-    # spin of suchannel resonance
+    # spin of subchannel resonance
     resonance = first(propagators)
     @assert resonance["node"] == [i, j]
     #
     spin = resonance["spin"]
     two_j = spin |> x2
     two_js = tbs.two_js
-    # build two vertices manualy
+    # build two vertices manually
     ind_ij = findfirst(v -> v["node"] == [i, j], vertices)
     vertex_ij = vertices[ind_ij]
     Hij = dict2instance(
@@ -109,7 +109,7 @@ function dict2instance(::Type{ThreeBodyDecay}, decay_description; workspace)
     tbs = dict2instance(ThreeBodySystem, kinematics)
     df = dict2instance.(DecayChain, chains; tbs, workspace) |> DataFrame
     model = ThreeBodyDecay(
-        Vector{Pair{String,Tuple{Complex,AbstractDecayChain}}}(
+        Vector{Pair{String, Tuple{Complex, AbstractDecayChain}}}(
             df.name .=> zip(df.coupling, df.chain),
         ),
     )

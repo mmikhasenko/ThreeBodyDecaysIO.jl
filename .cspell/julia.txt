@@ -1,3 +1,6 @@
+acosh
+asinh
+atanh
 btime
 circleorigin
 coeffs
@@ -6,17 +9,21 @@ cosθ
 cosθij
 cuhre
 Dalitz
+findfirst
 fitin
+getfield
 haskey
 inphrange
 inrange
 invperm
+invpermute
 isapprox
 iseven
 isodd
 isphysical
 ispositive
 joinpath
+juliadoc
 Kallen
 lineshape
 misq
@@ -26,6 +33,7 @@ mssq
 nonpole
 permutedims
 polardalitz
+prewalk
 println
 rborder
 reim
@@ -38,6 +46,7 @@ testset
 Testsets
 textrm
 tonumber
+trunc
 tullio
 warntype
 σiofk

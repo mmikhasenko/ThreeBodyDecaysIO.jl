@@ -76,7 +76,7 @@ let
         end
 
         @info "🔥 Building lineshapes functions 🔥"
-        workspace = Dict{String, Any}()
+        workspace = Dict{String,Any}()
         @unpack functions = input
         for fn in functions
             @unpack name, type = fn

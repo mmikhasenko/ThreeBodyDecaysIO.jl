@@ -60,13 +60,13 @@ function expression_argument(expr)
 end
 
 function print_function(body, arg, pars)
-    fdef_str = "$arg -> begin\n"
+    function_def_str = "$arg -> begin\n"
     map(Tuple(keys(pars))) do k
-        fdef_str *= "$k = $(pars[k])\n"
+        function_def_str *= "$k = $(pars[k])\n"
     end
-    fdef_str *= "$(body)\n end"
+    function_def_str *= "$(body)\n end"
     #
-    return fdef_str
+    return function_def_str
 end
 
 function parse_into_function(body, pars = Dict("i" => 1im))
@@ -75,9 +75,9 @@ function parse_into_function(body, pars = Dict("i" => 1im))
     @assert length(variables) == 1 "Number of undefined variables more than one: variables=$variables"
     arg = variables[1]
     #
-    fdef_str = print_function(body, arg, pars)
-    fdef = Meta.parse(fdef_str)
-    f = eval(fdef)
+    function_def_str = print_function(body, arg, pars)
+    function_def = Meta.parse(function_def_str)
+    f = eval(function_def)
     f, arg
 end
 
@@ -85,7 +85,7 @@ struct generic_function end
 
 function dict2instance(::Type{generic_function}, dict)
     @unpack expression = dict
-    parameters_dict = Dict{String,Any}(dict)
+    parameters_dict = Dict{String, Any}(dict)
     pop!(parameters_dict, "type")
     pop!(parameters_dict, "expression")
     parameters_dict["i"] = 1im
