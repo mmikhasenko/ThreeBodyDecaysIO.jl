@@ -114,7 +114,7 @@ serializeToDict::ThreeBodyDecay;
         lineshape_parser::Function=trivial_lineshape_parser,
         particle_labels::NTuple{4,String}=("A", "B", "C", "X"))
 
-Writes a `ThreeBodyDecay` model to a dictionary. The argunent `lineshape_parser` is passed to the chain-serialization function.
+Writes a `ThreeBodyDecay` model to a dictionary. The argument `lineshape_parser` is passed to the chain-serialization function.
 The argument `particle_labels` is passed to the kinematics serialization function.
 
 ## Arguments

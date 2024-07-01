@@ -51,7 +51,7 @@ end
     ms = masses(model)
     σs = x2σs([0.2, 0.3], ms; k = 1)
     #
-    model_name, point_name = "mymodel", "mypoint"
+    model_name, point_name = "my_model", "my_point"
     _fields1 = validation_fields(model, σs; k = 2, point_name, model_name)
     _fields2 = validation_fields(
         model,

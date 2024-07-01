@@ -23,6 +23,7 @@ helicities
 imag
 issequential
 JPAC
+Katchaev
 latexstring
 lhcb
 lims
@@ -51,3 +52,5 @@ ylim
 ηηηphase
 ηηηphaseisplus
 ηηηphasesign
+lineshapes
+helicity

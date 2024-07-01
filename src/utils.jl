@@ -6,7 +6,7 @@ function update2values(x, ref)
         return ref[x]
     end
     if x isa Dict
-        _d = Dict{String, Any}()
+        _d = Dict{String,Any}()
         for (k, v) in x
             _d[k] = update2values(v, ref)
         end

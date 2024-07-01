@@ -50,7 +50,7 @@ input = open(joinpath(@__DIR__, "..", "test", "lc2ppi-lhcb-test.json")) do io
 end
 
 # built functions will be stored in workspace
-workspace = Dict{String, Any}()
+workspace = Dict{String,Any}()
 
 # build functions from JSON array,
 @unpack functions = input

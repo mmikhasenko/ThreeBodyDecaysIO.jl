@@ -109,7 +109,7 @@ function dict2instance(::Type{ThreeBodyDecay}, decay_description; workspace)
     tbs = dict2instance(ThreeBodySystem, kinematics)
     df = dict2instance.(DecayChain, chains; tbs, workspace) |> DataFrame
     model = ThreeBodyDecay(
-        Vector{Pair{String, Tuple{Complex, AbstractDecayChain}}}(
+        Vector{Pair{String,Tuple{Complex,AbstractDecayChain}}}(
             df.name .=> zip(df.coupling, df.chain),
         ),
     )
