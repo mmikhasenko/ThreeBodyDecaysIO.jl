@@ -86,6 +86,7 @@ end
     #
     d = Dict(
         "type" => "generic_function",
+        "name" => "X(1001)",
         "expression" => "x+l*log(x)-2*o+g",
         "l" => 2.0,
         "o" => -3.0,

@@ -85,9 +85,10 @@ struct generic_function end
 
 function dict2instance(::Type{generic_function}, dict)
     @unpack expression = dict
-    parameters_dict = Dict{String,Any}(dict)
-    pop!(parameters_dict, "type")
+    parameters_dict = Dict{String, Any}(dict)
     pop!(parameters_dict, "expression")
+    haskey(parameters_dict, "name") && pop!(parameters_dict, "name")
+    haskey(parameters_dict, "type") && pop!(parameters_dict, "type")
     parameters_dict["i"] = 1im
     f, arg = parse_into_function(expression, parameters_dict)
     # arg = expression_argument(parsed_expression)
