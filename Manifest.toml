@@ -2,7 +2,7 @@
 
 julia_version = "1.10.3"
 manifest_format = "2.0"
-project_hash = "402b2cf627d7cadb037c4ac1b77e129720d6b4ae"
+project_hash = "f4493327780dd7ab42e2134c3e844efee92f9c7a"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -471,11 +471,9 @@ version = "1.10.0"
 
 [[deps.ThreeBodyDecays]]
 deps = ["Parameters", "PartialWaveFunctions", "PolynomialRoots", "Polynomials", "RecipesBase", "StaticArrays", "Tullio"]
-git-tree-sha1 = "ff763663d93068d282f0720d3c1eee8e2f268a58"
-repo-rev = "v0.12.0"
-repo-url = "https://github.com/mmikhasenko/ThreeBodyDecays.jl.git"
+git-tree-sha1 = "93bd4a5fbf9e07f9767a4f50cb12b69748b9fc21"
 uuid = "e6563dab-9ca1-5843-bde3-2ccf38d63843"
-version = "0.11.3"
+version = "0.12.0"
 
 [[deps.Tullio]]
 deps = ["DiffRules", "LinearAlgebra", "Requires"]
