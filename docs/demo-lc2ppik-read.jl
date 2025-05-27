@@ -1,5 +1,9 @@
 # Script builds the model from JSON file
 
+using Pkg
+Pkg.activate(joinpath(@__DIR__, ".."))
+Pkg.instantiate()
+# 
 using ThreeBodyDecaysIO
 using ThreeBodyDecaysIO.ThreeBodyDecays
 using HadronicLineshapes
@@ -35,7 +39,7 @@ function ThreeBodyDecaysIO.dict2instance(::Type{BreitWignerWidthExpLikeBugg}, di
     bw = BreitWignerWidthExpLikeBugg(mass, width, slope)
     parameters = String[]
     variables = [x]
-    return NamedArgFunc(bw, variables, parameters)
+    return NamedArgFunc(bw, variables)
 end
 
 
@@ -50,7 +54,7 @@ input = open(joinpath(@__DIR__, "..", "test", "lc2ppi-lhcb-test.json")) do io
 end
 
 # built functions will be stored in workspace
-workspace = Dict{String,Any}()
+workspace = Dict{String, Any}()
 
 # build functions from JSON array,
 @unpack functions = input
