@@ -6,9 +6,9 @@
 
 ## Features
 
-- Serialization and deserialization of three-body decay models to and from JSON format.
-- Support for detailed kinematics, lineshapes, and interaction chains descriptions.
-- Utilities for validation and manipulation of model components.
+-   Serialization and deserialization of three-body decay models to and from JSON format.
+-   Support for detailed kinematics, lineshapes, and interaction chains descriptions.
+-   Utilities for validation and manipulation of model components.
 
 ## Installation
 
@@ -65,6 +65,24 @@ Pkg.test("ThreeBodyDecaysIO")
 ```
 
 This will execute a series of tests, verifying the functionality of model serialization/deserialization, kinematics parsing, and more. See details in [`test/runtests.jl`](test/runtests.jl)
+
+## Running pre-commit hooks
+
+To check code formatting, spelling, and other style issues before committing, you can run the pre-commit hooks manually:
+
+```sh
+pre-commit run --all-files
+```
+
+This will run all configured checks on the entire codebase and automatically fix some issues. See `.pre-commit-config.yaml` for details.
+
+To skip pre-commit hooks for a specific commit (e.g., for quick commits), use the `--no-verify` flag:
+
+```sh
+git commit -m "your message" --no-verify
+```
+
+This allows you to commit without running the pre-commit checks when needed.
 
 ## Contributing
 

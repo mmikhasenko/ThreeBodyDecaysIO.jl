@@ -14,7 +14,7 @@ Polynomials = "f27b6e38-b328-58d1-80ce-0feddd5e7a45"
 ThreeBodyDecays = "e6563dab-9ca1-5843-bde3-2ccf38d63843"
 
 [compat]
-HadronicLineshapes = "0.4.0"
+HadronicLineshapes = ">= 0.4.1"
 ThreeBodyDecays = "0.12.0"
 julia = "1.0"
 
