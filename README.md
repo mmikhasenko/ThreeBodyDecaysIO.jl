@@ -76,6 +76,14 @@ pre-commit run --all-files
 
 This will run all configured checks on the entire codebase and automatically fix some issues. See `.pre-commit-config.yaml` for details.
 
+To skip pre-commit hooks for a specific commit (e.g., for quick commits), use the `--no-verify` flag:
+
+```sh
+git commit -m "your message" --no-verify
+```
+
+This allows you to commit without running the pre-commit checks when needed.
+
 ## Contributing
 
 Contributions to `ThreeBodyDecaysIO` are welcome. To contribute, please fork the repository, make your changes, and submit a pull request.
