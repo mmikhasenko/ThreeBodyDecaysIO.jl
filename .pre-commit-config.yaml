@@ -35,4 +35,3 @@ repos:
       rev: v1.0.56
       hooks:
           - id: julia-formatter
-            ignore: ^notebooks/.*\.jl$
