@@ -61,7 +61,16 @@ function serializeToDict(obj::NamedArgFunc{BreitWigner})
     @unpack f, variable_names = obj
     @unpack ma, mb, l, d = f
     x = first(variable_names)
-    dict = LittleDict{Symbol,Any}(pairs((; type, mass = f.m, width = f.Γ, ma, mb, l, d, x)))
+    dict = LittleDict{String,Any}(
+        "type" => type,
+        "mass" => f.m,
+        "width" => f.Γ,
+        "ma" => ma,
+        "mb" => mb,
+        "l" => l,
+        "d" => d,
+        "x" => x,
+    )
     appendix = Dict()
     return (dict, appendix)
 end
@@ -72,10 +81,15 @@ function serializeToDict(obj::NamedArgFunc{<:MultichannelBreitWigner})
     x = first(variable_names)
     _channels = map(channels) do channel
         @unpack gsq, ma, mb, l, d = channel
-        LittleDict{Symbol,Any}(pairs((; gsq, ma, mb, l, d)))
+        LittleDict{String,Any}("gsq" => gsq, "ma" => ma, "mb" => mb, "l" => l, "d" => d)
     end
     appendix = Dict()
-    dict = LittleDict{Symbol,Any}(pairs((; type, mass = m, channels = _channels, x)))
+    dict = LittleDict{String,Any}(
+        "type" => type,
+        "mass" => m,
+        "channels" => _channels,
+        "x" => x,
+    )
     return (dict, appendix)
 end
 
@@ -84,14 +98,14 @@ function serializeToDict(x::BlattWeisskopf)
     l = orbital_momentum(x)
     radius = x.d
     type = "BlattWeisskopf"
-    dict = LittleDict{Symbol,Any}(pairs((; type, l, radius)))
+    dict = LittleDict{String,Any}("type" => type, "l" => l, "radius" => radius)
     appendix = Dict()
     return (dict, appendix)
 end
 function serializeToDict(x::MomentumPower)
     l = orbital_momentum(x)
     type = "MomentumPower"
-    dict = LittleDict{Symbol,Any}(pairs((; type, l)))
+    dict = LittleDict{String,Any}("type" => type, "l" => l)
     appendix = Dict()
     return (dict, appendix)
 end
