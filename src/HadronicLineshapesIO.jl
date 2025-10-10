@@ -109,3 +109,93 @@ function serializeToDict(x::MomentumPower)
     appendix = Dict()
     return (dict, appendix)
 end
+
+
+
+
+
+# For lineshape is not just serializeToDict,
+# but it's split into three parts:
+# - scattering
+# - FF_production
+# - FF_decay
+# and we need to serialize each part separately.
+#
+# For combined lineshape, we need to serialize the three parts separately.
+# For other lineshapes, we use the trivial lineshape parser.
+
+"""
+    trivial_lineshape_parser(Xlineshape; k)
+
+Trivial lineshape parser leaves all fields empty.
+"""
+function trivial_lineshape_parser(Xlineshape; k)
+    scattering = ""
+    FF_production = ""
+    FF_decay = ""
+    appendix = Dict()
+    (; scattering, FF_production, FF_decay), appendix
+end
+
+struct CombinedFPF{T1,T2,T3} <: HadronicLineshapes.AbstractFlexFunc
+    ff_production::T1
+    ff_decay::T2
+    propagator::T3
+    ms::ThreeBodyDecays.MassTuple{Float64}
+    k::Int
+end
+CombinedFPF(ff_production, ff_decay, propagator; ms, k) =
+    CombinedFPF(ff_production, ff_decay, propagator, ms, k)
+function (d::CombinedFPF)(σ)
+    @unpack ms, k = d
+    i, j = ij_from_k(k)
+    p_production = HadronicLineshapes.breakup(ms[4], sqrt(σ), ms[k])
+    p_decay = HadronicLineshapes.breakup(sqrt(σ), ms[i], ms[j])
+    d.ff_production(p_production) * d.ff_decay(p_decay) * d.propagator(σ)
+end
+
+
+function lineshape_parser(Xlineshape; k)
+    @warn "Using trivial lineshape parser for lineshape of type $(typeof(Xlineshape))."
+    trivial_lineshape_parser(Xlineshape; k) # fall back
+end
+
+
+"""
+    lineshape_parser(Xlineshape::CombinedFPF; k)
+
+A proper lineshape parser for lineshape is defined on a special type `CombinedFPF`, where
+the propagator, FF_production, and FF_decay are separated.
+The method generates a random name for the propagator, FF_production, and FF_decay with a common base name.
+The index k is used to provide correct name to the dependence variable.
+"""
+function lineshape_parser(Xlineshape::CombinedFPF; k)
+    appendix = Dict()
+
+    @unpack ff_decay, ff_production, propagator = Xlineshape
+    dependence_variable = "σ$k"
+    #
+    common_part = randstring(10)
+    propagator_name = common_part * "_propagator"
+    FF_decay_name = common_part * "(decay)"
+    FF_production_name = common_part * "(production)"
+
+    a = Dict(
+        propagator_name =>
+            NamedArgFunc(propagator, [dependence_variable]) |> serializeToDict |> first,
+    )
+    merge!(appendix, a)
+
+    a = Dict(
+        FF_decay_name => ff_decay |> serializeToDict |> first,
+        FF_production_name => ff_production |> serializeToDict |> first,
+    )
+    merge!(appendix, a)
+
+    (;
+        scattering = propagator_name,
+        FF_production = FF_production_name,
+        FF_decay = FF_decay_name,
+    ),
+    appendix
+end

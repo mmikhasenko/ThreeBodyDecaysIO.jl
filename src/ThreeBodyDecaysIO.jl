@@ -13,6 +13,7 @@ using MacroTools
 import Polynomials: Polynomial
 export Polynomial
 
+using Random # for name generation
 using RuntimeGeneratedFunctions
 RuntimeGeneratedFunctions.init(@__MODULE__)
 
@@ -24,6 +25,7 @@ include("writer.jl")
 
 export NamedArgFunc
 include("HadronicLineshapesIO.jl")
+
 export generic_function
 export expression_argument, expression_arguments
 include("generic_function.jl")

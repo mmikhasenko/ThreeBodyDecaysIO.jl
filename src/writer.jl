@@ -26,35 +26,22 @@ function serializeToDict(H::NoRecoupling)
 end
 
 
-function trivial_lineshape_parser(Xlineshape)
-    scattering = ""
-    FF_production = ""
-    FF_decay = ""
-    appendix = Dict()
-    (; scattering, FF_production, FF_decay), appendix
-end
-
 
 """
     serializeToDict(chain::AbstractDecayChain;
-        name::AbstractString="my_decay_chain",
-        lineshape_parser::Function=trivial_lineshape_parser)
+        name::AbstractString="my_decay_chain")
 
 Writes a `DecayChain` model to a dictionary including `propagators`, and `vertices`, and `topology`.
-Function `lineshape_parser` is called on `chain.Xlineshape` to split it into `scattering`, `FF_production`, and `FF_decay`.
-See `trivial_lineshape_parser`.
+To serialize the lineshape, `lineshape_parser` is called on `chain.Xlineshape` to split it into `scattering`, `FF_production`, and `FF_decay`,
+and populate the appendix.
 """
-function serializeToDict(
-    chain::AbstractDecayChain;
-    name::AbstractString = "my_decay_chain",
-    lineshape_parser::Function = trivial_lineshape_parser,
-)
+function serializeToDict(chain::AbstractDecayChain; name::AbstractString = "my_decay_chain")
     @unpack k = chain
     i, j = ij_from_k(k)
     #
     appendix = Dict()
     # energy-dependence
-    X, a = lineshape_parser(chain.Xlineshape)
+    X, a = lineshape_parser(chain.Xlineshape; k)
     merge!(appendix, a)
     @unpack scattering, FF_production, FF_decay = X
     propagator = LittleDict(
@@ -123,7 +110,6 @@ end
 
 """
 serializeToDict::ThreeBodyDecay;
-        lineshape_parser::Function=trivial_lineshape_parser,
         particle_labels::NTuple{4,String}=("A", "B", "C", "X"))
 
 Writes a `ThreeBodyDecay` model to a dictionary. The argument `lineshape_parser` is passed to the chain-serialization function.
@@ -132,14 +118,11 @@ The argument `particle_labels` is passed to the kinematics serialization functio
 ## Arguments
 
 - `model::ThreeBodyDecay`: The model to serialize.
-- `lineshape_parser`: A function that takes a `Xlineshape` and returns
-a special tuple of a type `((; scattering, FF_production, FF_decay), appendix)`. See `trivial_lineshape_parser`.
 - `particle_labels`: a tuple with labels of the particles in the decay.
 ```
 """
 function serializeToDict(
     model::ThreeBodyDecay;
-    lineshape_parser::Function = trivial_lineshape_parser,
     particle_labels::NTuple{4,String} = ("A", "B", "C", "X"),
 )
     #
@@ -150,7 +133,7 @@ function serializeToDict(
     merge!(appendix, a)
     #
     _chains = map(zip(chains, names, couplings)) do (chain, name, coupling)
-        dict, a = serializeToDict(chain; name, lineshape_parser)
+        dict, a = serializeToDict(chain; name)
         merge!(appendix, a)
         push!(dict, "weight" => replace(string(coupling), "im" => "i"))
     end

@@ -2,7 +2,7 @@
 
 julia_version = "1.12.0"
 manifest_format = "2.0"
-project_hash = "f83f64243833b26aa4eb43d67daecd26243432b8"
+project_hash = "20d41e763da22935900e501d930f166db759c6b3"
 
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
@@ -451,7 +451,7 @@ version = "0.12.3"
 deps = ["DataFrames", "HadronicLineshapes", "JSON", "MacroTools", "OrderedCollections", "Parameters", "Polynomials", "RuntimeGeneratedFunctions", "ThreeBodyDecays"]
 path = "."
 uuid = "418e7ecf-680e-4cb5-ad61-5e2f006aefac"
-version = "0.7.0"
+version = "0.8.0"
 
 [[deps.Tullio]]
 deps = ["DiffRules", "LinearAlgebra", "Requires"]
