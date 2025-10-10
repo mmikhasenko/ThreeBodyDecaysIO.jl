@@ -13,6 +13,9 @@ using MacroTools
 import Polynomials: Polynomial
 export Polynomial
 
+using RuntimeGeneratedFunctions
+RuntimeGeneratedFunctions.init(@__MODULE__)
+
 
 export serializeToDict
 export add_hs3_fields

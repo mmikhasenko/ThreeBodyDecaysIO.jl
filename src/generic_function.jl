@@ -77,7 +77,9 @@ function parse_into_function(body, pars = Dict("i" => 1im))
     #
     function_def_str = print_function(body, arg, pars)
     function_def = Meta.parse(function_def_str)
-    f = eval(function_def)
+
+    # Use RuntimeGeneratedFunction to avoid world age issues
+    f = @RuntimeGeneratedFunction function_def
     f, arg
 end
 

@@ -183,7 +183,9 @@ function add_hs3_fields(decay_description, appendix, model_name = "my_amplitude_
                 "variables" => variable_groups,
             ),
         ],
-        "functions" => [(v["name"] = k; v) for (k, v) in appendix],
+        "functions" => [
+            (v["name"] = k; v) for (k, v) in appendix
+        ],
         "domains" => [
             OrderedDict(
                 "name" => "default",
