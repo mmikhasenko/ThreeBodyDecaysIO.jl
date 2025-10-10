@@ -156,7 +156,7 @@ end
 
 
 function lineshape_parser(Xlineshape; k)
-    @warn "Using trivial lineshape parser for lineshape of type $(typeof(Xlineshape))."
+    @warn "Using trivial lineshape parser for lineshape of type $(typeof(Xlineshape)). No custom parser is defined for type $(typeof(Xlineshape)). To ensure correct parsing, please implement a custom lineshape_parser method for this type. See the method for CombinedFPF as an example."
     trivial_lineshape_parser(Xlineshape; k) # fall back
 end
 
