@@ -37,9 +37,9 @@ function lineshape_parser(Xlineshape)
     FF_production = "BlattWeisskopf(b-decay)"
     a = Dict(
         "BlattWeisskopf(resonance)" =>
-            Dict(:type => "BlattWeisskopf", :l => 1, :radius => 1.5),
+            Dict("type" => "BlattWeisskopf", "l" => 1, "radius" => 1.5),
         "BlattWeisskopf(b-decay)" =>
-            Dict(:type => "BlattWeisskopf", :l => 1, :radius => 5.0),
+            Dict("type" => "BlattWeisskopf", "l" => 1, "radius" => 5.0),
     )
     merge!(appendix, a)
     (; scattering, FF_production, FF_decay), appendix
@@ -50,13 +50,13 @@ end
     @test trivial_lineshape_parser isa Function
     decay_description, appendix =
         serializeToDict(model; lineshape_parser = trivial_lineshape_parser)
-    @test haskey(decay_description, :chains)
-    @test length(decay_description[:chains]) == 3
+    @test haskey(decay_description, "chains")
+    @test length(decay_description["chains"]) == 3
 end
 
 
 decay_description, appendix = serializeToDict(model; lineshape_parser)
-appendix["K892_BW"][:x] = "sigma"
+appendix["K892_BW"]["x"] = "sigma"
 dict = add_hs3_fields(decay_description, appendix, "default-model")
 
 open("test.json", "w") do io

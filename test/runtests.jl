@@ -15,3 +15,6 @@ include("test_model_content.jl")
 
 # test validation
 include("test_validation.jl")
+
+# test symbol to string key conversion
+include("test_symbol_string_keys.jl")

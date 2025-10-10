@@ -64,8 +64,8 @@ end
     )
     bw1 = dict2instance(MultichannelBreitWigner, d)
     dict, _ = serializeToDict(bw1)
-    @test all(values(dict[:channels][1]) .== values(d["channels"][1]))
-    @test all(values(dict[:channels][2]) .== values(d["channels"][2]))
+    @test all(values(dict["channels"][1]) .== values(d["channels"][1]))
+    @test all(values(dict["channels"][2]) .== values(d["channels"][2]))
 end
 
 @testset "Polynomial from plane Dict" begin
