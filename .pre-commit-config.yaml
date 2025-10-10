@@ -9,7 +9,7 @@ repos:
           - id: check-useless-excludes
 
     - repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v4.6.0
+      rev: v6.0.0
       hooks:
           - id: check-case-conflict
           - id: check-json
@@ -25,13 +25,6 @@ repos:
       rev: v8.8.0
       hooks:
           - id: cspell
-
-    - repo: https://github.com/pre-commit/mirrors-prettier
-      rev: v4.0.0-alpha.8
-      hooks:
-          - id: prettier
-            exclude: ^.*\.jl$
-            args: [--end-of-line, lf]
 
     - repo: https://github.com/domluna/JuliaFormatter.jl
       rev: v2.1.6
