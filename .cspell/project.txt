@@ -1,3 +1,4 @@
+binind
 Blatt
 Breit
 Bugg
@@ -5,11 +6,13 @@ Dalitz
 doublearg
 Flatte
 helicities
+helicity
 issequential
 JPAC
 Katchaev
 latexstring
 lhcb
+lineshapes
 Mikhasenko
 Misha
 mktempdir
@@ -18,6 +21,7 @@ Ncols
 Nrows
 pentaquarks
 ppik
+randstring
 Recoupling
 Semileptonic
 subchannel
@@ -26,6 +30,3 @@ Xlineshape
 ηηηphase
 ηηηphaseisplus
 ηηηphasesign
-lineshapes
-helicity
-binind
