@@ -31,6 +31,7 @@ repos:
       hooks:
           - id: prettier
             exclude: ^.*\.jl$
+            args: [--end-of-line, lf]
 
     - repo: https://github.com/domluna/JuliaFormatter.jl
       rev: v2.1.6
