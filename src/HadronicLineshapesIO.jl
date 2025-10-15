@@ -109,6 +109,10 @@ function serializeToDict(x::MomentumPower)
     appendix = Dict()
     return (dict, appendix)
 end
+function serializeToDict(H::NoFormFactor)
+    appendix = Dict()
+    ("", appendix)
+end
 
 
 

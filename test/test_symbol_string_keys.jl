@@ -14,8 +14,8 @@ using Test
         k = 1,
         two_j = 2,
         Xlineshape = BreitWigner(1.1, 0.1),
-        Hij = RecouplingLS((2, 0)),
-        HRk = RecouplingLS((2, 2)),
+        Hij = RecouplingLS((2, 0)) |> VertexFunction,
+        HRk = RecouplingLS((2, 2)) |> VertexFunction,
         tbs,
     )
 

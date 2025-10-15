@@ -1,3 +1,18 @@
+function serializeToDict(H::VertexFunction)
+    type = "ls"
+    @unpack h, ff = H
+    ff_dict, ff_appendix = serializeToDict(ff)
+    h_dict, h_appendix = serializeToDict(h)
+    H_dict = LittleDict{String,Any}(
+        "type" => type,
+        "helicity" => h_dict,
+        "formfactor" => ff_dict,
+    )
+    # append appendix
+    appendix = Dict()
+    merge!(appendix, ff_appendix, h_appendix)
+    (H_dict, appendix)
+end
 
 function serializeToDict(H::RecouplingLS)
     type = "ls"
@@ -26,7 +41,6 @@ function serializeToDict(H::NoRecoupling)
 end
 
 
-
 """
     serializeToDict(chain::AbstractDecayChain;
         name::AbstractString="my_decay_chain")
@@ -52,10 +66,11 @@ function serializeToDict(chain::AbstractDecayChain; name::AbstractString = "my_d
     propagators = [propagator]
     #
     H1, a = serializeToDict(chain.HRk)
-    push!(H1, "node" => [[i, j], k], "formfactor" => FF_production), merge!(appendix, a)
+    push!(H1, "node" => [[i, j], k])
+    merge!(appendix, a)
     #
     H2, a = serializeToDict(chain.Hij)
-    push!(H2, "node" => [i, j], "formfactor" => FF_decay)
+    push!(H2, "node" => [i, j])
     merge!(appendix, a)
     #
     vertices = [H1, H2]
