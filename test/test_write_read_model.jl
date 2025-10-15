@@ -1,8 +1,8 @@
-using ThreeBodyDecaysIO
-using ThreeBodyDecaysIO.ThreeBodyDecays
 using ThreeBodyDecaysIO.HadronicLineshapes
+using ThreeBodyDecaysIO.ThreeBodyDecays
 using ThreeBodyDecaysIO.Parameters
 using ThreeBodyDecaysIO.JSON
+using ThreeBodyDecaysIO
 using Test
 
 
@@ -14,35 +14,20 @@ model = let
     dpp = randomPoint(tbs)
     #
     two_j = 2
-    X(k) = ThreeBodyDecaysIO.CombinedFPF(
-        BlattWeisskopf{two_j}(1.5),
-        BlattWeisskopf{two_j}(1.5),
-        BreitWigner(1.1, 0.1);
-        tbs.ms,
-        k,
-    )
     #
     ch1 = DecayChain(;
         k = 1,
         two_j,
-        Xlineshape = X(1),
+        Xlineshape = BreitWigner(1.1, 0.1),
         Hij = RecouplingLS((two_j, 0)) |> VertexFunction,
         HRk = RecouplingLS((two_j, two_j)) |> VertexFunction,
         tbs,
     )
-    ch2 = DecayChain(ch1; k = 2, Xlineshape = X(2))
-    ch3 = DecayChain(ch1; k = 3, Xlineshape = X(3))
+    ch2 = DecayChain(ch1; k = 2)
+    ch3 = DecayChain(ch1; k = 3)
     #
     ThreeBodyDecay("K892" .=> [(4.0, ch1), (2.0, ch2), (3.0, ch3)])
 end
-
-@testset "Trivial lineshape parser" begin
-    @test trivial_lineshape_parser isa Function
-    decay_description, appendix = serializeToDict(model)
-    @test haskey(decay_description, "chains")
-    @test length(decay_description["chains"]) == 3
-end
-
 
 decay_description, appendix = serializeToDict(model)
 dict = add_hs3_fields(decay_description, appendix, "default-model")

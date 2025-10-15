@@ -1,4 +1,4 @@
-function dict2instance(::Type{ThreeBodySystem}, dict::Dict)
+function dict2instance(::Type{ThreeBodySystem}, dict::AbstractDict)
     initial_state = dict["initial_state"]
     final_states = dict["final_state"]
 
@@ -59,17 +59,19 @@ function dict2instance(::Type{DecayChain}, dict; tbs, workspace = Dict())
     ind_ij = findfirst(v -> v["node"] == [i, j], vertices)
     vertex_ij = vertices[ind_ij]
     Hij = dict2instance(
-        ThreeBodyDecays.Recoupling,
+        ThreeBodyDecays.VertexFunction,
         vertex_ij,
-        (; two_j_fin = [two_js[i], two_js[j]], two_j_ini = two_j),
+        (; two_j_fin = [two_js[i], two_js[j]], two_j_ini = two_j);
+        workspace,
     )
     #
     ind_Rk = findfirst(v -> v["node"] == [[i, j], k], vertices)
     vertex_Rk = vertices[ind_Rk]
     HRk = dict2instance(
-        ThreeBodyDecays.Recoupling,
+        ThreeBodyDecays.VertexFunction,
         vertex_Rk,
-        (; two_j_fin = [two_j, two_js[k]], two_j_ini = two_js[4]),
+        (; two_j_fin = [two_j, two_js[k]], two_j_ini = two_js[4]);
+        workspace,
     )
 
     # build lineshape
@@ -79,22 +81,6 @@ function dict2instance(::Type{DecayChain}, dict; tbs, workspace = Dict())
     )
     !(scattering isa String) && error("The scattering should be a string. Got: $scattering")
     X = workspace[scattering].f
-    if vertex_Rk["formfactor"] != ""
-        # for 0->Rk decay
-        FF_Rk = build_or_fetch(vertex_Rk["formfactor"], workspace)
-        @unpack ms = tbs
-        p(σ) = HadronicLineshapes.breakup(ms[4], sqrt(σ), ms[k])
-        FF_Rk_svf = FF_Rk(p)
-        X *= FF_Rk_svf
-    end
-    if vertex_ij["formfactor"] != ""
-        # for R->ij decay
-        FF_ij = build_or_fetch(vertex_ij["formfactor"], workspace)
-        @unpack ms = tbs
-        q(σ) = HadronicLineshapes.breakup(sqrt(σ), ms[i], ms[j])
-        FF_ij_svf = FF_ij(q)
-        X *= FF_ij_svf
-    end
     chain = DecayChain(; k, two_j, Xlineshape = X, Hij, HRk, tbs)
     (; coupling, chain, name)
 end
@@ -116,10 +102,28 @@ function dict2instance(::Type{ThreeBodyDecay}, decay_description; workspace)
     return model
 end
 
+function dict2instance(
+    ::Type{ThreeBodyDecays.VertexFunction},
+    dict,
+    properties;
+    workspace = Dict(),
+)
+
+    formfactor_name = dict["formfactor"]
+    # Handle formfactor: if empty string, use NoFormFactor(), otherwise get from workspace
+    if formfactor_name == ""
+        formfactor = NoFormFactor()
+    else
+        formfactor = workspace[formfactor_name]
+    end
+    helicity = dict2instance(ThreeBodyDecays.Recoupling, dict, properties)
+
+    return VertexFunction(helicity, formfactor)
+end
+
 function dict2instance(::Type{ThreeBodyDecays.Recoupling}, dict, properties)
     if dict["type"] == "ls"
         @unpack l, s = dict
-        two_ja, two_jb = properties.two_j_fin
         @unpack two_j_ini = properties
         return RecouplingLS(; two_ls = (l, s) .|> x2)
     end

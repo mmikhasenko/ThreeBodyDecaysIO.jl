@@ -1,17 +1,11 @@
 function serializeToDict(H::VertexFunction)
     type = "ls"
     @unpack h, ff = H
-    ff_dict, ff_appendix = serializeToDict(ff)
-    h_dict, h_appendix = serializeToDict(h)
-    H_dict = LittleDict{String,Any}(
-        "type" => type,
-        "helicity" => h_dict,
-        "formfactor" => ff_dict,
-    )
-    # append appendix
-    appendix = Dict()
-    merge!(appendix, ff_appendix, h_appendix)
-    (H_dict, appendix)
+    ff_name, ff_appendix = serializeToDict(ff)
+    h_dict, _ = serializeToDict(h) # helicity coupling does not produce an appendix
+    H_dict = LittleDict{String,Any}("type" => type, "formfactor" => ff_name)
+    merge!(H_dict, h_dict)
+    (H_dict, ff_appendix)
 end
 
 function serializeToDict(H::RecouplingLS)
@@ -46,23 +40,19 @@ end
         name::AbstractString="my_decay_chain")
 
 Writes a `DecayChain` model to a dictionary including `propagators`, and `vertices`, and `topology`.
-To serialize the lineshape, `lineshape_parser` is called on `chain.Xlineshape` to split it into `scattering`, `FF_production`, and `FF_decay`,
-and populate the appendix.
 """
 function serializeToDict(chain::AbstractDecayChain; name::AbstractString = "my_decay_chain")
     @unpack k = chain
     i, j = ij_from_k(k)
     #
     appendix = Dict()
-    # energy-dependence
-    X, a = lineshape_parser(chain.Xlineshape; k)
-    merge!(appendix, a)
-    @unpack scattering, FF_production, FF_decay = X
-    propagator = LittleDict(
-        "spin" => chain.two_j |> d2,
-        "parametrization" => scattering,
-        "node" => [i, j],
-    )
+
+    # propagator
+    name = "propagator_$(k)_$(hash(chain.Xlineshape))"
+    named_func = NamedArgFunc(chain.Xlineshape, ["s"])
+    merge!(appendix, Dict(name => named_func))
+    propagator =
+        LittleDict("spin" => chain.two_j |> d2, "parametrization" => name, "node" => [i, j])
     propagators = [propagator]
     #
     H1, a = serializeToDict(chain.HRk)
@@ -127,7 +117,7 @@ end
 serializeToDict::ThreeBodyDecay;
         particle_labels::NTuple{4,String}=("A", "B", "C", "X"))
 
-Writes a `ThreeBodyDecay` model to a dictionary. The argument `lineshape_parser` is passed to the chain-serialization function.
+Writes a `ThreeBodyDecay` model to a dictionary.
 The argument `particle_labels` is passed to the kinematics serialization function.
 
 ## Arguments
@@ -182,7 +172,16 @@ function add_hs3_fields(decay_description, appendix, model_name = "my_amplitude_
             ),
         ],
         "functions" => [
-            (v["name"] = k; v) for (k, v) in appendix
+            begin
+                if v isa NamedArgFunc
+                    v_dict, _ = serializeToDict(v)
+                    v_dict["name"] = k
+                    v_dict
+                else
+                    v["name"] = k
+                    v
+                end
+            end for (k, v) in appendix
         ],
         "domains" => [
             OrderedDict(
