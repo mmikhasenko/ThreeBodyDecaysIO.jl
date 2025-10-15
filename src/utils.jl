@@ -37,13 +37,35 @@ function reorder(last_index)
     t -> invpermute!(collect(t), [i, j, k]) |> Tuple
 end
 
+"""
+    array2dict(a::AbstractArray; key, apply = identity)
+
+Convert an array of objects to a dictionary by extracting a key from each object.
+
+This function transforms structured data from JSON arrays (which preserve order)
+into Julia dictionaries (which enable fast key-based lookups). For each object in the array,
+it extracts the specified key to use as the dictionary key, and applies a transformation
+function to the remaining data.
+
+# Arguments
+- `a`: Array of objects (typically from JSON parsing)
+- `key`: The field name to extract and use as the dictionary key
+- `apply`: Function to transform the remaining data (default: identity)
+
+# Example
+```julia
+data = [Dict("node" => [1,2], "vars" => ["a","b"]),
+        Dict("node" => [3,4], "vars" => ["c","d"])]
+result = array2dict(data; key="node", apply=x->x["vars"])
+# Returns: LittleDict([1,2] => ["a","b"], [3,4] => ["c","d"])
+```
+"""
 function array2dict(a::AbstractArray; key, apply = identity)
     map(a) do p
-        # Convert JSON.Object to regular Dict
-        _p = Dict(p)
-        _key = _p[key]
-        pop!(_p, key)
-        _key => apply(_p)
+        _key = p[key]
+        # Extract remaining data without the key
+        remaining_data = Dict(k => v for (k, v) in p if k != key)
+        _key => apply(remaining_data)
     end |> LittleDict
 end
 
