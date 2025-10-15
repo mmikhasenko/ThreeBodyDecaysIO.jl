@@ -39,8 +39,9 @@ end
 
 function array2dict(a::AbstractArray; key, apply = identity)
     map(a) do p
-        _p = copy(p)
-        _key = p[key]
+        # Convert JSON.Object to regular Dict
+        _p = Dict(p)
+        _key = _p[key]
         pop!(_p, key)
         _key => apply(_p)
     end |> LittleDict

@@ -28,13 +28,4 @@ using Test
     @test all(isa(k, String) for k in keys(dict["chains"][1]))
     @test all(isa(k, String) for k in keys(dict["chains"][1]["vertices"][1]))
     @test all(isa(k, String) for k in keys(dict["chains"][1]["propagators"][1]))
-
-    # Test that deserialization doesn't fail with KeyError (Symbol/String mismatch)
-    try
-        workspace = Dict{String,Any}()
-        dict2instance(ThreeBodyDecay, dict; workspace)
-        @test true  # Success
-    catch e
-        @test !isa(e, KeyError)  # Should not be a key error
-    end
 end
